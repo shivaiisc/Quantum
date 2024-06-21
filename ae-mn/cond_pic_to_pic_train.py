@@ -3,12 +3,11 @@ import torch
 import numpy as np
 from dataset import Cond_Pic_to_Pic_dataset
 from loss import SSIM_DICE_BCE, calc_metrics 
-from utils import save_model, load_model, plot
-from torch.utils.data import DataLoader, random_split
+from utils import save_model, load_model, plot, get_model
 from torch.optim import Adam 
 from torchvision.utils import make_grid 
+from torch.utils.data import DataLoader
 from tqdm import tqdm 
-from einops import rearrange
 import os 
 
 def loop(model, loader, optimizer, criterion, args, mode='train'): 
@@ -50,6 +49,7 @@ def loop(model, loader, optimizer, criterion, args, mode='train'):
         total_loss_list.append(log_dict['total_loss'])
         # pbar.set_postfix({**metrics, **log_dict})
         pbar.set_postfix(log_dict, refresh=idx%10==0)
+        break
     loss_dct = {f'{mode}_ssim_loss': round(np.mean(ssim_loss_list), 4),
                 f'{mode}_dice_loss': round(np.mean(dice_loss_list), 4),
                 f'{mode}_bce_loss': round(np.mean(dice_loss_list), 4),
@@ -81,7 +81,6 @@ def train(model, loaders, optimizer, criterion, args):
         print('val loss', val_loss)
         loss = val_loss['val_total_loss'] 
         log_dct = {**train_loss, **val_loss}
-        args.log.writerow(log_dct)
         
         if loss < best_loss: 
             best_loss = loss 
@@ -94,6 +93,14 @@ def train(model, loaders, optimizer, criterion, args):
             args.early_stopping_idx += 1
 
         save_model(model, loss, args, best=False)
+        f = open(args.csv_path, 'w')
+        args.log = csv.DictWriter(f, log_dct.keys()) 
+        args.log.writerow(log_dct)
+        f.close() 
+        if epoch % 2 == 0:
+            os.system(f'cp {args.csv_path} {args.dummy_csv_path}')
+            plot(args.dummy_csv_path, args.plot_path)
+            os.system('../g.sh')
     print('==========Training done==============') 
 
 
@@ -103,20 +110,13 @@ def train(model, loaders, optimizer, criterion, args):
         print('Test loss', test_loss) 
 
 def main(args):
-    dataset = Cond_Pic_to_Pic_dataset(args.data_csv)
-    train_data, val_data, test_data = random_split(dataset, [0.8, 0.1, 0.1]) 
+    train_data = Cond_Pic_to_Pic_dataset(args.train_csv)
+    val_data = Cond_Pic_to_Pic_dataset(args.val_csv)
+    test_data = Cond_Pic_to_Pic_dataset(args.test_csv)
     loaders = {'train': DataLoader(train_data, args.batch_size),
                'val': DataLoader(val_data, args.batch_size),
                'test': DataLoader(test_data, args.batch_size)} 
-    if args.model_name == 'unet':
-        from models import UNET
-        model = UNET(in_ch=args.in_ch, out_ch=args.out_ch).to(args.device)
-    elif args.model_name == 'u2net': 
-        from models import U2NET
-        model = U2NET(in_ch=args.in_ch, out_ch=args.out_ch).to(args.device) 
-    else:
-        print('model Unavailable')
-        exit()
+    model = get_model(args)
     if args.parallel:
         model = torch.nn.DataParallel(model, device_ids=[0, 1])
     args.save_path = f'./ckpts/{args.model_name}.pth'
@@ -125,20 +125,24 @@ def main(args):
     optimizer = Adam(model.parameters(), lr=args.lr)
     criterion = SSIM_DICE_BCE() 
     
-    f = open('plot.csv', 'w')
+    args.csv_path = './logs/cond/' + str(len(os.listdir('./logs/cond/'))) + 'log.csv'
+    args.dummy_csv_path = './logs/cond/' + str(len(os.listdir('./logs/cond/'))) + '_log.csv'
+    args.plot_path = './logs/cond/' + str(len(os.listdir('./logs/cond/'))) + 'train_plot.png'
+    config_path = './logs/cond/' + str(len(os.listdir('./logs/cond/'))) + 'config.txt'
+    args.config_file = open(config_path, 'w')
     row = ['train_dice_loss', 'train_ssim_loss', \
     'train_bce_loss', 'train_total_loss', 'val_dice_loss',\
     'val_ssim_loss', 'val_bce_loss', 'val_total_loss']
 
     dct = {k:k for k in row}
+    f = open(args.csv_path, 'w')
     args.log = csv.DictWriter(f, dct.keys()) 
     args.log.writerow(dct)
-    print(args)
-    train(model, loaders, optimizer, criterion, args)
     f.close() 
+    print(args)
+    args.config_file.write(str(vars(args)))
+    train(model, loaders, optimizer, criterion, args)
 
-    plot('./plot.csv')
-    os.system('~/git_img.sh')
     
 
 if __name__ == '__main__': 
@@ -149,7 +153,9 @@ if __name__ == '__main__':
     parser.add_argument('-bs', '--batch_size', type=int, default=16)
     parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('-es', '--early_stop', type=int, default=10) 
-    parser.add_argument('-dp', '--data_csv', type=str, default='../../qml-data/qml_mns.csv') 
+    parser.add_argument('--train_csv', type=str, default='../../../qml-data/csv_files/train_80.csv') 
+    parser.add_argument('--val_csv', type=str, default='../../../qml-data/csv_files/val_10.csv') 
+    parser.add_argument('--test_csv', type=str, default='../../../qml-data/csv_files/test_20.csv') 
     parser.add_argument('-ic', '--in_ch', type=int, default=2)
     parser.add_argument('-oc', '--out_ch', type=int, default=1)
     parser.add_argument('-nq', '--n_qubits', type=int, default=28)

@@ -46,7 +46,7 @@ class Quanv(nn.Module):
         fig, ax = qml.draw_mpl(q_all_kern ,expansion_strategy='device')(torch.randn(n_qubits),
                             torch.randn(3, n_qubits, 3), torch.randn(3, n_qubits), torch.randn(3,),
                             torch.randn(1,), torch.randn(1, ), torch.randn(3,))
-        fig.savefig('./model.png')
+        # fig.savefig('./model.png')
 
     def forward(self, x):
         x = self.fc1(x)

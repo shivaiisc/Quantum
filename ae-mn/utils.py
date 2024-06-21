@@ -9,6 +9,20 @@ from PIL import Image
 import cv2 
 from torchvision.transforms import ToTensor 
 
+
+def get_model(args): 
+    if args.model_name == 'unet':
+        from models import UNET
+        model = UNET(in_ch=args.in_ch, out_ch=args.out_ch).to(args.device)
+    elif args.model_name == 'u2net': 
+        from models import U2NET
+        model = U2NET(in_ch=args.in_ch, out_ch=args.out_ch).to(args.device) 
+    else:
+        print('model Unavailable')
+        exit()
+    return model
+
+
 def imgs_to_vid(pre_imgs):
     path = '../../qml-data/'
     out_path = './res/'
