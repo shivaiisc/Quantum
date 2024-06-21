@@ -49,7 +49,6 @@ def loop(model, loader, optimizer, criterion, args, mode='train'):
         total_loss_list.append(log_dict['total_loss'])
         # pbar.set_postfix({**metrics, **log_dict})
         pbar.set_postfix(log_dict, refresh=idx%10==0)
-        break
     loss_dct = {f'{mode}_ssim_loss': round(np.mean(ssim_loss_list), 4),
                 f'{mode}_dice_loss': round(np.mean(dice_loss_list), 4),
                 f'{mode}_bce_loss': round(np.mean(dice_loss_list), 4),
@@ -139,6 +138,8 @@ def main(args):
     print(args)
     args.config_file.write(str(vars(args)))
     train(model, loaders, optimizer, criterion, args)
+    plot(args.csv_path, args.plot_path)
+    os.system('../g.sh')
 
     
 
