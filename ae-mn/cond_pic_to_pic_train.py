@@ -97,10 +97,8 @@ def train(model, loaders, optimizer, criterion, args):
         args.log = csv.DictWriter(f, log_dct.keys()) 
         args.log.writerow(log_dct)
         f.close() 
-        if epoch % 2 == 0:
-            os.system(f'cp {args.csv_path} {args.dummy_csv_path}')
-            plot(args.dummy_csv_path, args.plot_path)
-            os.system('../g.sh')
+        plot(args.csv_path, args.plot_path)
+        os.system('../g.sh')
     print('==========Training done==============') 
 
 
@@ -126,7 +124,6 @@ def main(args):
     criterion = SSIM_DICE_BCE() 
     
     args.csv_path = './logs/cond/' + str(len(os.listdir('./logs/cond/'))) + 'log.csv'
-    args.dummy_csv_path = './logs/cond/' + str(len(os.listdir('./logs/cond/'))) + '_log.csv'
     args.plot_path = './logs/cond/' + str(len(os.listdir('./logs/cond/'))) + 'train_plot.png'
     config_path = './logs/cond/' + str(len(os.listdir('./logs/cond/'))) + 'config.txt'
     args.config_file = open(config_path, 'w')
