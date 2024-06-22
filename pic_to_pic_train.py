@@ -145,9 +145,9 @@ def main(args):
     optimizer = Adam(model.parameters(), lr=args.lr)
     criterion = SSIM_DICE_BCE() 
     
-    row = ['train_dice_loss', 'train_ssim_loss', \
-    'train_bce_loss', 'train_total_loss', 'val_dice_loss',\
-    'val_ssim_loss', 'val_bce_loss', 'val_total_loss']
+    row = ['train_ssim_loss', 'train_dice_loss', \
+    'train_bce_loss', 'train_total_loss', 'val_ssim_loss',\
+    'val_dice_loss', 'val_bce_loss', 'val_total_loss']
 
     dct = {k:k for k in row}
     f = open(args.csv_path, 'w')
@@ -171,9 +171,9 @@ if __name__ == '__main__':
     parser.add_argument('-bs', '--batch_size', type=int, default=16)
     parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('-es', '--early_stop', type=int, default=10) 
-    parser.add_argument('-trc', '--train_csv', type=str, default='../../../qml-data/csv_files/train_80.csv') 
-    parser.add_argument('-vc', '--val_csv', type=str, default='../../../qml-data/csv_files/val_10.csv') 
-    parser.add_argument('-tc', '--test_csv', type=str, default='../../../qml-data/csv_files/test_20.csv') 
+    parser.add_argument('-trc', '--train_csv', type=str, default='../../qml-data/csv_files/train_80.csv') 
+    parser.add_argument('-vc', '--val_csv', type=str, default='../../qml-data/csv_files/val_10.csv') 
+    parser.add_argument('-tc', '--test_csv', type=str, default='../../qml-data/csv_files/test_20.csv') 
     parser.add_argument('-ic', '--in_ch', type=int, default=1)
     parser.add_argument('-oc', '--out_ch', type=int, default=1)
     parser.add_argument('-nq', '--n_qubits', type=int, default=28)
@@ -187,4 +187,3 @@ if __name__ == '__main__':
     args.early_stopping_idx = 0 
 
     main(args)
-
