@@ -6,7 +6,7 @@ import os
 import pandas as pd 
 
 class Pic_to_Pic_dataset(Dataset): 
-    def __init__(self, data_csv, transform = None): 
+    def __init__(self, data_csv, transform): 
         super().__init__() 
         self.df = pd.read_csv(data_csv)
         self.transform = transform
@@ -19,12 +19,8 @@ class Pic_to_Pic_dataset(Dataset):
         mask_path = '/home/shivac/qml-data/'+self.df.mask_path[index] 
         img = Image.open(img_path).convert('L') 
         mask = Image.open(mask_path)
-        if self.transform:
-            img = self.transform(img)
-            mask = self.transform(mask)
-            return img, mask
-        img = ToTensor()(img)
-        mask = ToTensor()(mask)
+        img = self.transform(img)
+        mask = self.transform(mask)
         return img, mask
 
 

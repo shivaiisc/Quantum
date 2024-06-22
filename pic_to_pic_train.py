@@ -1,4 +1,5 @@
 import csv 
+from curtsies.fmtfuncs import green, red, blue 
 import pickle
 import torch 
 import numpy as np
@@ -8,6 +9,7 @@ from utils import save_model, load_model, plot, get_model
 from torch.utils.data import DataLoader, random_split
 from torch.optim import Adam 
 from torchvision.utils import make_grid 
+from torchvision import transforms as T
 from tqdm import tqdm 
 from einops import rearrange
 import os 
@@ -76,7 +78,6 @@ def train(model, loaders, optimizer, criterion, args):
         with torch.no_grad(): 
             val_loss = loop(model, val_loader, optimizer,
                     criterion, args, mode='val') 
-        print('val loss', val_loss)
         loss = val_loss['val_total_loss'] 
         dct = {**train_loss, **val_loss}
         
@@ -84,10 +85,13 @@ def train(model, loaders, optimizer, criterion, args):
             best_loss = loss 
             args.early_stopping_idx = 0 
             save_model(model, loss, args, best=True)
+            print(green('val loss', val_loss))
         elif args.early_stopping_idx > args.early_stop: 
+            args.early_stopping_idx -= 1
             print('-'*10, 'Earyly stopping', '-'*10)
             break
         else:
+            print(red('val loss', val_loss))
             args.early_stopping_idx += 1
 
         save_model(model, loss, args, best=False)
@@ -97,7 +101,7 @@ def train(model, loaders, optimizer, criterion, args):
         args.log.writerow(dct)
         f.close()
         plot(args.csv_path, args.plot_path)
-        os.system('../g.sh>>del.txt')
+        os.system('./g.sh>>del.txt')
 
     print('==========Training done==============') 
 
@@ -109,12 +113,15 @@ def train(model, loaders, optimizer, criterion, args):
         print('Test loss', test_loss) 
 
 def main(args):
-    train_data = Pic_to_Pic_dataset(args.train_csv)
-    val_data = Pic_to_Pic_dataset(args.val_csv)
-    test_data = Pic_to_Pic_dataset(args.test_csv)
+    transform = T.Compose([T.ToTensor(),
+                           T.RandomVerticalFlip(),
+                           T.RandomHorizontalFlip()])
+    train_data = Pic_to_Pic_dataset(args.train_csv, transform)
+    val_data = Pic_to_Pic_dataset(args.val_csv, transform)
+    test_data = Pic_to_Pic_dataset(args.test_csv, transform)
     loaders = {'train': DataLoader(train_data, args.batch_size),
-               'val': DataLoader(val_data, args.batch_size),
-               'test': DataLoader(test_data, args.batch_size)} 
+               'val': DataLoader(val_data, args.batch_size*2),
+               'test': DataLoader(test_data, args.batch_size*2)} 
     model = get_model(args)
     if args.parallel:
         model = torch.nn.DataParallel(model, device_ids=[0, 1])
@@ -171,9 +178,9 @@ if __name__ == '__main__':
     parser.add_argument('-bs', '--batch_size', type=int, default=16)
     parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('-es', '--early_stop', type=int, default=10) 
-    parser.add_argument('-trc', '--train_csv', type=str, default='../../qml-data/csv_files/train_80.csv') 
-    parser.add_argument('-vc', '--val_csv', type=str, default='../../qml-data/csv_files/val_10.csv') 
-    parser.add_argument('-tc', '--test_csv', type=str, default='../../qml-data/csv_files/test_20.csv') 
+    parser.add_argument('-trc', '--train_csv', type=str, default='../../qml-data/csv_files/org_train_75.csv') 
+    parser.add_argument('-vc', '--val_csv', type=str, default='../../qml-data/csv_files/org_val_10.csv') 
+    parser.add_argument('-tc', '--test_csv', type=str, default='../../qml-data/csv_files/org_test_20.csv') 
     parser.add_argument('-ic', '--in_ch', type=int, default=1)
     parser.add_argument('-oc', '--out_ch', type=int, default=1)
     parser.add_argument('-nq', '--n_qubits', type=int, default=28)
