@@ -86,7 +86,7 @@ def train(model, loaders, optimizer, criterion, args):
             args.early_stopping_idx = 0 
             save_model(model, loss, args, best=True)
             print(green(f'val loss {val_loss}'))
-        elif args.early_stopping_idx > args.early_stop: 
+        elif args.early_stopping_idx >= args.early_stop: 
             args.early_stopping_idx -= 1
             print('-'*10, 'Earyly stopping', '-'*10)
             break
