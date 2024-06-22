@@ -52,6 +52,7 @@ def loop(model, loader, optimizer, criterion, args, mode='train'):
         total_loss_list.append(log_dict['total_loss'])
         # pbar.set_postfix({**metrics, **log_dict})
         pbar.set_postfix(log_dict, refresh=idx%10==0)
+        break
     loss_dct = {f'{mode}_ssim_loss': round(np.mean(ssim_loss_list), 4),
                 f'{mode}_dice_loss': round(np.mean(dice_loss_list), 4),
                 f'{mode}_bce_loss': round(np.mean(bce_loss_list), 4),
@@ -85,13 +86,13 @@ def train(model, loaders, optimizer, criterion, args):
             best_loss = loss 
             args.early_stopping_idx = 0 
             save_model(model, loss, args, best=True)
-            print(green('val loss', val_loss))
+            print(green(f'val loss {val_loss}'))
         elif args.early_stopping_idx > args.early_stop: 
             args.early_stopping_idx -= 1
             print('-'*10, 'Earyly stopping', '-'*10)
             break
         else:
-            print(red('val loss', val_loss))
+            print(red(f'val loss {val_loss}'))
             args.early_stopping_idx += 1
 
         save_model(model, loss, args, best=False)
@@ -101,7 +102,7 @@ def train(model, loaders, optimizer, criterion, args):
         args.log.writerow(dct)
         f.close()
         plot(args.csv_path, args.plot_path)
-        os.system('./g.sh>>del.txt')
+        os.system('./g.sh&>>del.txt')
 
     print('==========Training done==============') 
 
