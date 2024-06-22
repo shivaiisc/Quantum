@@ -72,7 +72,7 @@ def train(model, loaders, optimizer, criterion, args):
         model.train() 
         train_loss = loop(model, train_loader, optimizer, 
              criterion, args, mode='train')
-        print('Training loss', train_loss)
+        print(blue(f'Training loss {train_loss}'))
     
         model.eval()
         with torch.no_grad(): 
