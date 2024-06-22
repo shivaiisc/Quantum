@@ -110,7 +110,9 @@ def train(model, loaders, optimizer, criterion, args):
     with torch.no_grad(): 
         test_loss = loop(model, test_loader, optimizer,\
                          criterion, args, mode='test') 
-        print('Test loss', test_loss) 
+        print(blue(f'Test loss: {test_loss}'))  
+    with open(args.logs_path + 'test_results.txt', 'w') as f:
+        f.write(f'test loss: {test_loss}')
 
 def main(args):
     if args.random_split:
@@ -146,6 +148,7 @@ def main(args):
     args.save_path = f'{ckpt_dir}/{args.model_name}.pth'
     args.save_best_path = f'{ckpt_dir}/best_{args.model_name}.pth'
     logs_path = f'./logs/{args.experiment}/'
+    args.logs_path = logs_path
     if not os.path.exists(logs_path): 
         os.mkdir(logs_path) 
     logs_path += str(len(os.listdir(logs_path))) 
