@@ -119,8 +119,8 @@ def plot(csv_path, save_path):
         plt.xlabel('epochs')
         plt.ylabel('loss')
         plt.legend() 
-        plt.show()
         plt.savefig(save_path + f'{val[4:]}.png')
+        plt.clf()
 
 def main(args): 
     df = pd.read_csv(args.path).sort_values(by='idx') 
