@@ -119,6 +119,7 @@ def plot(csv_path, save_path):
         plt.xlabel('epochs')
         plt.ylabel('loss')
         plt.legend() 
+        plt.grid()
         plt.savefig(save_path + f'{val[4:]}.png')
         plt.clf()
 
