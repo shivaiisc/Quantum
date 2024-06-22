@@ -1,14 +1,15 @@
 import torch
 from torch.utils.data import Dataset 
 from PIL import Image 
-from torchvision.transforms import ToTensor
+from torchvision.transforms import ToTensor, transforms
 import os 
 import pandas as pd 
 
 class Pic_to_Pic_dataset(Dataset): 
-    def __init__(self, data_csv): 
+    def __init__(self, data_csv, transform = None): 
         super().__init__() 
         self.df = pd.read_csv(data_csv)
+        self.transform = transform
 
     def __len__(self): 
         return len(self.df)
@@ -18,6 +19,10 @@ class Pic_to_Pic_dataset(Dataset):
         mask_path = '/home/shivac/qml-data/'+self.df.mask_path[index] 
         img = Image.open(img_path).convert('L') 
         mask = Image.open(mask_path)
+        if self.transform:
+            img = self.transform(img)
+            mask = self.transform(mask)
+            return img, mask
         img = ToTensor()(img)
         mask = ToTensor()(mask)
         return img, mask
@@ -48,7 +53,11 @@ class Cond_Pic_to_Pic_dataset(Dataset):
 
 if __name__ == '__main__': 
     # dataset = Seq_Median_Nerve_Dataset(path='../.data/') 
-    dataset = Pic_to_Pic_dataset('../../../qml-data/csv_files/train_80.csv') 
+    import torchvision.transforms as T 
+    transform = T.Compose([T.ToTensor(), T.RandomHorizontalFlip(),
+                           T.RandomVerticalFlip()])
+    dataset = Pic_to_Pic_dataset('/home/shivac/qml-data/csv_files/org_99.csv',
+                                 transform=transform) 
     from torch.utils.data import DataLoader 
     loader = DataLoader(dataset, batch_size=2) 
     img, mask= next(iter(loader)) 
