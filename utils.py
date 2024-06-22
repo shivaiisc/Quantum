@@ -26,10 +26,14 @@ def get_model(args):
     return model
 
 
-def imgs_to_vid(pre_imgs, out_path):
+def imgs_to_vid(pre_imgs, out_path, mask=False):
     path = '/home/shivac/qml-data/'
-    out_video_name = 'fading cube2.mp4'
+    if mask:
+        out_video_name = '/mask.mp4'
+    else:
+        out_video_name = '/img.mp4'
     out_video_full_path = out_path+out_video_name
+    print(out_video_full_path)
 
     img = []
 
@@ -136,12 +140,10 @@ def main(args):
             continue 
         if idx > 100:
             break
-        print(patient)
-        print(patient_df.img_path[0])
+        imgs_to_vid(list(patient_df.img_path), patient)
+        imgs_to_vid(list(patient_df.mask_path), patient, mask=True)
+        # imgs_to_pth(list(patient_df.img_path), list(patient_df.mask_path))
         exit()
-        imgs_to_vid(list(patient_df.img_path))
-        imgs_to_vid(list(patient_df.mask_path))
-        imgs_to_pth(list(patient_df.img_path), list(patient_df.mask_path))
 
 if __name__ == '__main__': 
     import argparse 
