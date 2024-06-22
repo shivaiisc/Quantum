@@ -1864,3 +1864,32 @@ Changes not staged for commit:
  rewrite ae-mn/logs/quantum_noise/4/plots/dice_loss.png (99%)
  rewrite ae-mn/logs/quantum_noise/4/plots/ssim_loss.png (99%)
  rewrite ae-mn/logs/quantum_noise/4/plots/total_loss.png (99%)
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   del.txt
+	new file:   logs/quantum_noise/5/config.pkl
+	new file:   logs/quantum_noise/5/config.txt
+	new file:   logs/quantum_noise/5/log.csv
+	new file:   logs/quantum_noise/5/plots/bce_loss.png
+	new file:   logs/quantum_noise/5/plots/dice_loss.png
+	new file:   logs/quantum_noise/5/plots/ssim_loss.png
+	new file:   logs/quantum_noise/5/plots/total_loss.png
+	modified:   pic_to_pic_train.py
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   ../.gitignore
+
+[main f1c8bce] no comment
+ 9 files changed, 27 insertions(+)
+ create mode 100644 ae-mn/logs/quantum_noise/5/config.pkl
+ create mode 100644 ae-mn/logs/quantum_noise/5/config.txt
+ create mode 100644 ae-mn/logs/quantum_noise/5/log.csv
+ create mode 100644 ae-mn/logs/quantum_noise/5/plots/bce_loss.png
+ create mode 100644 ae-mn/logs/quantum_noise/5/plots/dice_loss.png
+ create mode 100644 ae-mn/logs/quantum_noise/5/plots/ssim_loss.png
+ create mode 100644 ae-mn/logs/quantum_noise/5/plots/total_loss.png
