@@ -1333,3 +1333,51 @@ Changes to be committed:
 [main 83eb6bf] no comment
  3 files changed, 13 insertions(+)
  rewrite ae-mn/logs/quantum_noise/3/log.png (98%)
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   del.txt
+	new file:   logs/quantum_noise/4/config.pkl
+	new file:   logs/quantum_noise/4/config.txt
+	new file:   logs/quantum_noise/4/log.csv
+	new file:   logs/quantum_noise/4/plots/bce_loss.png
+	new file:   logs/quantum_noise/4/plots/dice_loss.png
+	new file:   logs/quantum_noise/4/plots/ssim_loss.png
+	new file:   logs/quantum_noise/4/plots/total_loss.png
+	modified:   pic_to_pic_train.py
+	deleted:    res/fading cube2.mp4
+	deleted:    res/hey.png
+	deleted:    res/img.mp4
+	deleted:    res/mask.mp4
+	deleted:    res/plot.png
+	deleted:    res/sequential/config.txt
+	deleted:    res/sequential/q_unet_train_plot.csv
+	deleted:    res/sequential/q_unet_train_plot.png
+	deleted:    res/vid.mp4
+	modified:   utils.py
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   ../.gitignore
+
+[main 61b0bb1] no comment
+ 19 files changed, 24 insertions(+), 24 deletions(-)
+ create mode 100644 ae-mn/logs/quantum_noise/4/config.pkl
+ create mode 100644 ae-mn/logs/quantum_noise/4/config.txt
+ create mode 100644 ae-mn/logs/quantum_noise/4/log.csv
+ create mode 100644 ae-mn/logs/quantum_noise/4/plots/bce_loss.png
+ create mode 100644 ae-mn/logs/quantum_noise/4/plots/dice_loss.png
+ create mode 100644 ae-mn/logs/quantum_noise/4/plots/ssim_loss.png
+ create mode 100644 ae-mn/logs/quantum_noise/4/plots/total_loss.png
+ delete mode 100644 ae-mn/res/fading cube2.mp4
+ delete mode 100644 ae-mn/res/hey.png
+ delete mode 100644 ae-mn/res/img.mp4
+ delete mode 100644 ae-mn/res/mask.mp4
+ delete mode 100644 ae-mn/res/plot.png
+ delete mode 100644 ae-mn/res/sequential/config.txt
+ delete mode 100644 ae-mn/res/sequential/q_unet_train_plot.csv
+ delete mode 100644 ae-mn/res/sequential/q_unet_train_plot.png
+ delete mode 100644 ae-mn/res/vid.mp4
