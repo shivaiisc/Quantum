@@ -32,9 +32,9 @@ def imgs_to_vid(pre_imgs, out_path, mask=False):
     if not os.path.exists(out_path):
         os.mkdir(out_path)
     if mask:
-        out_video_name = 'mask.mp4'
+        out_video_name = 'mak.mp4'
     else:
-        out_video_name = 'img.mp4'
+        out_video_name = 'im.mp4'
     out_video_full_path = out_path+out_video_name
     print(out_video_full_path)
 
