@@ -56,11 +56,6 @@ def imgs_to_vid(pre_imgs, out_path, mask=False):
     for i in range(len(img)): 
         im = cv2.imread(img[i])
         im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-        print(im.shape)
-        if mask: 
-            print(np.max(im), np.where(im), np.std(im), np.mean(im))
-            im = np.where(im==255, 0, 255)
-            print(np.max(im), np.where(im), np.std(im), np.mean(im))
         video.write(im)
     video.release()
 
