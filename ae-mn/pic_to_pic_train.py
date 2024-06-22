@@ -98,6 +98,7 @@ def train(model, loaders, optimizer, criterion, args):
         f.close()
         plot(args.csv_path, args.plot_path)
         os.system('../g.sh>>del.txt')
+        exit()
 
     print('==========Training done==============') 
 
