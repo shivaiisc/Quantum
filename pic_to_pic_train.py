@@ -113,16 +113,25 @@ def train(model, loaders, optimizer, criterion, args):
         print('Test loss', test_loss) 
 
 def main(args):
-    transform = T.Compose([T.ToTensor(),
-                           T.RandomVerticalFlip(),
-                           T.RandomHorizontalFlip()])
-    train_data = Pic_to_Pic_dataset(args.train_csv, transform)
-    transform = T.ToTensor()
-    val_data = Pic_to_Pic_dataset(args.val_csv, transform)
-    test_data = Pic_to_Pic_dataset(args.test_csv, transform)
+    if args.random_split:
+        transform = T.ToTensor()
+        data = Pic_to_Pic_dataset(args.random_csv, transform)
+        train_data, val_data, test_data = random_split(data, [0.8, 0.1, 0.1])
+ 
+    else:
+        transform = T.Compose([T.ToTensor(),
+                            T.RandomVerticalFlip(),
+                            T.RandomHorizontalFlip()])
+        train_data = Pic_to_Pic_dataset(args.train_csv, transform)
+        transform = T.ToTensor()
+        val_data = Pic_to_Pic_dataset(args.val_csv, transform)
+        test_data = Pic_to_Pic_dataset(args.test_csv, transform)
     loaders = {'train': DataLoader(train_data, args.batch_size),
                'val': DataLoader(val_data, args.batch_size*2),
                'test': DataLoader(test_data, args.batch_size*2)} 
+    print(f'{len(train_data) = }')
+    print(f'{len(val_data) = }')
+    print(f'{len(test_data) = }')
     model = get_model(args)
     if args.parallel:
         model = torch.nn.DataParallel(model, device_ids=[0, 1])
@@ -174,12 +183,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser() 
     parser.add_argument('-ep', '--epochs', type=int, default=100)
     parser.add_argument('-rs', '--random_split', type=int, default=0)
-    parser.add_argument('-n', '--noise', type=float, default=0.1)
+    parser.add_argument('-n', '--noise', type=float, default=0.0)
     parser.add_argument('-exp', '--experiment', type=str, default='quantum_noise')
     parser.add_argument('-m', '--model_name', type=str, default='unet')
     parser.add_argument('-bs', '--batch_size', type=int, default=16)
     parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('-es', '--early_stop', type=int, default=10) 
+    parser.add_argument('-rc', '--random_csv', type=str, default='../../qml-data/csv_files/whole_298.csv') 
     parser.add_argument('-trc', '--train_csv', type=str, default='../../qml-data/csv_files/org_train_75.csv') 
     parser.add_argument('-vc', '--val_csv', type=str, default='../../qml-data/csv_files/org_val_10.csv') 
     parser.add_argument('-tc', '--test_csv', type=str, default='../../qml-data/csv_files/org_test_20.csv') 
