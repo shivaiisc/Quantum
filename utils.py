@@ -56,7 +56,7 @@ def imgs_to_vid(pre_imgs, out_path, mask=False):
     for i in range(len(img)): 
         im = Image.open(img[i]).convert('L')
         im = ToTensor()(im).permute(1, 2, 0)
-        im = im * 254.0
+        im = im * 255.0
         video.write(im.numpy().astype(np.uint8))
         break
     video.release()
