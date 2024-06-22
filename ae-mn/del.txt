@@ -1,0 +1,147 @@
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   cond_pic_to_pic_train.py
+	modified:   dataset.py
+	new file:   del.txt
+	modified:   logs/cond/15config.txt
+	new file:   logs/cond/18/config.txt
+	new file:   logs/cond/18/log.csv
+	new file:   logs/cond/19/config.txt
+	new file:   logs/cond/19/log.csv
+	new file:   logs/cond/20/config.txt
+	new file:   logs/cond/20/log.csv
+	new file:   logs/cond/21/config.txt
+	new file:   logs/cond/21/log.csv
+	new file:   logs/cond/22/config.txt
+	new file:   logs/cond/22/log.csv
+	new file:   logs/cond/23/config.txt
+	new file:   logs/cond/23/log.csv
+	new file:   logs/cond/24/config.txt
+	new file:   logs/cond/24/log.csv
+	new file:   logs/cond/25/config.txt
+	new file:   logs/cond/25/log.csv
+	new file:   logs/cond/26/config.txt
+	new file:   logs/cond/26/log.csv
+	new file:   logs/cond/27/config.txt
+	new file:   logs/cond/27/log.csv
+	new file:   logs/cond/28/config.txt
+	new file:   logs/cond/28/log.csv
+	new file:   logs/cond/29/config.txt
+	new file:   logs/cond/29/log.csv
+	new file:   logs/cond/30/config.txt
+	new file:   logs/cond/30/log.csv
+	new file:   logs/cond/31/config.txt
+	new file:   logs/cond/31/log.csv
+	new file:   logs/cond/32/config.txt
+	new file:   logs/cond/32/log.csv
+	new file:   logs/cond/33/config.txt
+	new file:   logs/cond/33/log.csv
+	new file:   logs/cond/34/config.txt
+	new file:   logs/cond/34/log.csv
+	new file:   logs/cond/35/config.txt
+	new file:   logs/cond/35/log.csv
+	new file:   logs/cond/36/config.txt
+	new file:   logs/cond/36/log.csv
+	new file:   logs/cond/37/config.txt
+	new file:   logs/cond/37/log.csv
+	new file:   logs/cond/38/config.txt
+	new file:   logs/cond/38/log.csv
+	new file:   logs/cond/39/config.txt
+	new file:   logs/cond/39/log.csv
+	new file:   logs/cond/40/config.txt
+	new file:   logs/cond/40/log.csv
+	new file:   logs/cond/41/config.txt
+	new file:   logs/cond/41/log.csv
+	new file:   logs/cond/42/config.txt
+	new file:   logs/cond/42/log.csv
+	new file:   logs/cond/43/config.txt
+	new file:   logs/cond/43/log.csv
+	new file:   logs/cond/44/config.txt
+	new file:   logs/cond/44/log.csv
+	new file:   logs/cond/45/config.txt
+	new file:   logs/cond/45/log.csv
+	new file:   logs/cond/46/config.txt
+	new file:   logs/cond/46/log.csv
+	new file:   logs/quantum_noise/0/log.csv
+	new file:   logs/quantum_noise/1/config.pkl
+	new file:   logs/quantum_noise/1/log.csv
+	new file:   logs/quantum_noise/2/log.csv
+	new file:   logs/quantum_noise/3/config.pkl
+	new file:   logs/quantum_noise/3/config.txt
+	new file:   logs/quantum_noise/3/log.csv
+	new file:   logs/quantum_noise/3/log.png
+	modified:   pic_to_pic_train.py
+	modified:   utils.py
+
+[main dfa37e5] no comment
+ 72 files changed, 139 insertions(+), 38 deletions(-)
+ create mode 100644 ae-mn/del.txt
+ create mode 100644 ae-mn/logs/cond/18/config.txt
+ create mode 100644 ae-mn/logs/cond/18/log.csv
+ create mode 100644 ae-mn/logs/cond/19/config.txt
+ create mode 100644 ae-mn/logs/cond/19/log.csv
+ create mode 100644 ae-mn/logs/cond/20/config.txt
+ create mode 100644 ae-mn/logs/cond/20/log.csv
+ create mode 100644 ae-mn/logs/cond/21/config.txt
+ create mode 100644 ae-mn/logs/cond/21/log.csv
+ create mode 100644 ae-mn/logs/cond/22/config.txt
+ create mode 100644 ae-mn/logs/cond/22/log.csv
+ create mode 100644 ae-mn/logs/cond/23/config.txt
+ create mode 100644 ae-mn/logs/cond/23/log.csv
+ create mode 100644 ae-mn/logs/cond/24/config.txt
+ create mode 100644 ae-mn/logs/cond/24/log.csv
+ create mode 100644 ae-mn/logs/cond/25/config.txt
+ create mode 100644 ae-mn/logs/cond/25/log.csv
+ create mode 100644 ae-mn/logs/cond/26/config.txt
+ create mode 100644 ae-mn/logs/cond/26/log.csv
+ create mode 100644 ae-mn/logs/cond/27/config.txt
+ create mode 100644 ae-mn/logs/cond/27/log.csv
+ create mode 100644 ae-mn/logs/cond/28/config.txt
+ create mode 100644 ae-mn/logs/cond/28/log.csv
+ create mode 100644 ae-mn/logs/cond/29/config.txt
+ create mode 100644 ae-mn/logs/cond/29/log.csv
+ create mode 100644 ae-mn/logs/cond/30/config.txt
+ create mode 100644 ae-mn/logs/cond/30/log.csv
+ create mode 100644 ae-mn/logs/cond/31/config.txt
+ create mode 100644 ae-mn/logs/cond/31/log.csv
+ create mode 100644 ae-mn/logs/cond/32/config.txt
+ create mode 100644 ae-mn/logs/cond/32/log.csv
+ create mode 100644 ae-mn/logs/cond/33/config.txt
+ create mode 100644 ae-mn/logs/cond/33/log.csv
+ create mode 100644 ae-mn/logs/cond/34/config.txt
+ create mode 100644 ae-mn/logs/cond/34/log.csv
+ create mode 100644 ae-mn/logs/cond/35/config.txt
+ create mode 100644 ae-mn/logs/cond/35/log.csv
+ create mode 100644 ae-mn/logs/cond/36/config.txt
+ create mode 100644 ae-mn/logs/cond/36/log.csv
+ create mode 100644 ae-mn/logs/cond/37/config.txt
+ create mode 100644 ae-mn/logs/cond/37/log.csv
+ create mode 100644 ae-mn/logs/cond/38/config.txt
+ create mode 100644 ae-mn/logs/cond/38/log.csv
+ create mode 100644 ae-mn/logs/cond/39/config.txt
+ create mode 100644 ae-mn/logs/cond/39/log.csv
+ create mode 100644 ae-mn/logs/cond/40/config.txt
+ create mode 100644 ae-mn/logs/cond/40/log.csv
+ create mode 100644 ae-mn/logs/cond/41/config.txt
+ create mode 100644 ae-mn/logs/cond/41/log.csv
+ create mode 100644 ae-mn/logs/cond/42/config.txt
+ create mode 100644 ae-mn/logs/cond/42/log.csv
+ create mode 100644 ae-mn/logs/cond/43/config.txt
+ create mode 100644 ae-mn/logs/cond/43/log.csv
+ create mode 100644 ae-mn/logs/cond/44/config.txt
+ create mode 100644 ae-mn/logs/cond/44/log.csv
+ create mode 100644 ae-mn/logs/cond/45/config.txt
+ create mode 100644 ae-mn/logs/cond/45/log.csv
+ create mode 100644 ae-mn/logs/cond/46/config.txt
+ create mode 100644 ae-mn/logs/cond/46/log.csv
+ create mode 100644 ae-mn/logs/quantum_noise/0/log.csv
+ create mode 100644 ae-mn/logs/quantum_noise/1/config.pkl
+ create mode 100644 ae-mn/logs/quantum_noise/1/log.csv
+ create mode 100644 ae-mn/logs/quantum_noise/2/log.csv
+ create mode 100644 ae-mn/logs/quantum_noise/3/config.pkl
+ create mode 100644 ae-mn/logs/quantum_noise/3/config.txt
+ create mode 100644 ae-mn/logs/quantum_noise/3/log.csv
+ create mode 100644 ae-mn/logs/quantum_noise/3/log.png
