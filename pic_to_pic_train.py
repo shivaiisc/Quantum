@@ -173,6 +173,7 @@ if __name__ == '__main__':
     import argparse 
     parser = argparse.ArgumentParser() 
     parser.add_argument('-ep', '--epochs', type=int, default=100)
+    parser.add_argument('-rs', '--random_split', type=int, default=0)
     parser.add_argument('-n', '--noise', type=float, default=0.1)
     parser.add_argument('-exp', '--experiment', type=str, default='quantum_noise')
     parser.add_argument('-m', '--model_name', type=str, default='unet')

@@ -8,7 +8,8 @@ import pandas as pd
 class Pic_to_Pic_dataset(Dataset): 
     def __init__(self, data_csv, transform): 
         super().__init__() 
-        self.df = pd.read_csv(data_csv)
+        self.df = pd.read_csv(data_csv).sort_values('patient_id')[:30000]
+        self.df =  self.df.reset_index()
         self.transform = transform
 
     def __len__(self): 
