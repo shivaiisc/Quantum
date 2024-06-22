@@ -56,9 +56,7 @@ def imgs_to_vid(pre_imgs, out_path, mask=False):
     for i in range(len(img)): 
         im = Image.open(img[i]).convert('L')
         im = ToTensor()(im).squeeze().unsqueeze(-1)
-        print(torch.max(im), torch.min(im))
         im = im * 255.0
-        print(torch.max(im), torch.min(im))
         video.write(im.numpy().astype(np.uint8))
     video.release()
 
