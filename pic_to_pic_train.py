@@ -117,6 +117,7 @@ def main(args):
                            T.RandomVerticalFlip(),
                            T.RandomHorizontalFlip()])
     train_data = Pic_to_Pic_dataset(args.train_csv, transform)
+    transform = T.ToTensor()
     val_data = Pic_to_Pic_dataset(args.val_csv, transform)
     test_data = Pic_to_Pic_dataset(args.test_csv, transform)
     loaders = {'train': DataLoader(train_data, args.batch_size),
