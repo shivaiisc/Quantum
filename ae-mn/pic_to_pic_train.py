@@ -22,6 +22,7 @@ def loop(model, loader, optimizer, criterion, args, mode='train'):
     for idx, (x, y) in pbar: 
         x = x.to(args.device)
         y = y.to(args.device)
+        x = x + torch.randn_like(x, device=args.device)*args.noise
         logits = model(x) 
         loss = criterion(logits, y)
         
@@ -49,7 +50,6 @@ def loop(model, loader, optimizer, criterion, args, mode='train'):
         total_loss_list.append(log_dict['total_loss'])
         # pbar.set_postfix({**metrics, **log_dict})
         pbar.set_postfix(log_dict, refresh=idx%10==0)
-        break
     loss_dct = {f'{mode}_ssim_loss': round(np.mean(ssim_loss_list), 4),
                 f'{mode}_dice_loss': round(np.mean(dice_loss_list), 4),
                 f'{mode}_bce_loss': round(np.mean(dice_loss_list), 4),
@@ -165,6 +165,7 @@ if __name__ == '__main__':
     import argparse 
     parser = argparse.ArgumentParser() 
     parser.add_argument('-ep', '--epochs', type=int, default=100)
+    parser.add_argument('-n', '--noise', type=float, default=0.1)
     parser.add_argument('-exp', '--experiment', type=str, default='quantum_noise')
     parser.add_argument('-m', '--model_name', type=str, default='unet')
     parser.add_argument('-bs', '--batch_size', type=int, default=16)
