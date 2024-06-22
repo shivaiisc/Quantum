@@ -26,9 +26,8 @@ def get_model(args):
     return model
 
 
-def imgs_to_vid(pre_imgs):
-    path = '../../qml-data/'
-    out_path = './res/'
+def imgs_to_vid(pre_imgs, out_path):
+    path = '/home/shivac/qml-data/'
     out_video_name = 'fading cube2.mp4'
     out_video_full_path = out_path+out_video_name
 
@@ -137,14 +136,17 @@ def main(args):
             continue 
         if idx > 100:
             break
+        print(patient)
+        print(patient_df.img_path[0])
+        exit()
+        imgs_to_vid(list(patient_df.img_path))
+        imgs_to_vid(list(patient_df.mask_path))
         imgs_to_pth(list(patient_df.img_path), list(patient_df.mask_path))
 
 if __name__ == '__main__': 
-    plot('./logs/quantum_noise/3/log.csv', './logs/quantum_noise/3/log.png')
-    exit()
     import argparse 
     parser = argparse.ArgumentParser() 
-    parser.add_argument('-p', '--path', type=str, default='~/qml-data/qml_mns.csv')
+    parser.add_argument('-p', '--path', type=str, default='/home/shivac/qml-data/csv_files/org_99.csv')
     args = parser.parse_args() 
 
     main(args)
