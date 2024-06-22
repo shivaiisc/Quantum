@@ -48,10 +48,10 @@ class Cond_Pic_to_Pic_dataset(Dataset):
 
 if __name__ == '__main__': 
     # dataset = Seq_Median_Nerve_Dataset(path='../.data/') 
-    dataset = Cond_Pic_to_Pic_dataset('../../../qml-data/csv_files/train_80.csv') 
+    dataset = Pic_to_Pic_dataset('../../../qml-data/csv_files/train_80.csv') 
     from torch.utils.data import DataLoader 
     loader = DataLoader(dataset, batch_size=2) 
-    img, mask, idx= next(iter(loader)) 
-    print(img.shape, mask.shape, idx)
+    img, mask= next(iter(loader)) 
+    print(img.shape, mask.shape)
     
 

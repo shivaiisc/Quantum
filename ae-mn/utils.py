@@ -17,6 +17,9 @@ def get_model(args):
     elif args.model_name == 'u2net': 
         from models import U2NET
         model = U2NET(in_ch=args.in_ch, out_ch=args.out_ch).to(args.device) 
+    elif args.model_name == 'q_unet': 
+        from models import Q_UNET 
+        model = Q_UNET(in_ch=args.in_ch, out_ch=args.out_ch, n_qubits=args.n_qubits).to(args.device)
     else:
         print('model Unavailable')
         exit()

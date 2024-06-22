@@ -10,6 +10,14 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm 
 import os 
 
+import os
+
+# os.environ['CUDA_LAUNCH_BLOCKING']="1"
+os.environ['TORCH_USE_CUDA_DSA'] = "1" 
+
+
+
+
 def loop(model, loader, optimizer, criterion, args, mode='train'): 
     pbar = tqdm(enumerate(loader)) 
     pbar.set_description(f'epochs:{args.curr_epoch}/{args.epochs}')
@@ -21,9 +29,13 @@ def loop(model, loader, optimizer, criterion, args, mode='train'):
         x = x.to(args.device)
         y = y.to(args.device)
         idxs = idxs.to(args.device)
-        x = torch.cat([x, torch.ones_like(x)*idxs.reshape(-1, 1, 1, 1)/290.0], dim=1)
+        idxs = torch.where(idxs <290, idxs, 290)
+        cond = torch.zeros_like(x, device=args.device).repeat(1, 290, 1, 1)
+        cond[:, idxs] = torch.ones(x.shape[-2:], device=args.device, dtype=torch.float32)
+        x = torch.cat([x, cond], dim=1)
         logits = model(x) 
         loss = criterion(logits, y)
+        # print(loss)
         
         ssim_loss = loss['ssim_loss'] 
         dice_loss = loss['dice_loss'] 
@@ -92,12 +104,12 @@ def train(model, loaders, optimizer, criterion, args):
             args.early_stopping_idx += 1
 
         save_model(model, loss, args, best=False)
-        f = open(args.csv_path, 'w')
+        f = open(args.csv_path, 'a')
         args.log = csv.DictWriter(f, log_dct.keys()) 
         args.log.writerow(log_dct)
         f.close() 
         plot(args.csv_path, args.plot_path)
-        os.system('../g.sh')
+        os.system('../g.sh>>del.txt')
     print('==========Training done==============') 
 
 
@@ -121,10 +133,11 @@ def main(args):
     
     optimizer = Adam(model.parameters(), lr=args.lr)
     criterion = SSIM_DICE_BCE() 
-    
-    args.csv_path = './logs/cond/' + str(len(os.listdir('./logs/cond/'))) + 'log.csv'
-    args.plot_path = './logs/cond/' + str(len(os.listdir('./logs/cond/'))) + 'train_plot.png'
-    config_path = './logs/cond/' + str(len(os.listdir('./logs/cond/'))) + 'config.txt'
+    dir = str(len(os.listdir('./logs/cond/')))
+    os.makedirs('./logs/cond/{}'.format(dir))
+    args.csv_path = './logs/cond/' + dir + '/log.csv'
+    args.plot_path = './logs/cond/' + dir + '/train_plot.png'
+    config_path = './logs/cond/' + dir + '/config.txt'
     args.config_file = open(config_path, 'w')
     row = ['train_dice_loss', 'train_ssim_loss', \
     'train_bce_loss', 'train_total_loss', 'val_dice_loss',\
@@ -154,7 +167,7 @@ if __name__ == '__main__':
     parser.add_argument('--train_csv', type=str, default='../../../qml-data/csv_files/train_80.csv') 
     parser.add_argument('--val_csv', type=str, default='../../../qml-data/csv_files/val_10.csv') 
     parser.add_argument('--test_csv', type=str, default='../../../qml-data/csv_files/test_20.csv') 
-    parser.add_argument('-ic', '--in_ch', type=int, default=2)
+    parser.add_argument('-ic', '--in_ch', type=int, default=291)
     parser.add_argument('-oc', '--out_ch', type=int, default=1)
     parser.add_argument('-nq', '--n_qubits', type=int, default=28)
     parser.add_argument('-sr', '--ssim_ratio', type=float, default=0.33)
