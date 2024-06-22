@@ -137,7 +137,9 @@ def main(args):
     with open(logs_path+'/config.pkl', 'wb') as f:
         pickle.dump(vars(args), f)
     args.csv_path = f'{logs_path}/log.csv'
-    args.plot_path = f'{logs_path}/log.png'
+    args.plot_path = f'{logs_path}/plots/'
+    if not os.path.exists(args.plot_path):
+        os.mkdir(args.plot_path)
     config_txt_path = f'{logs_path}/config.txt'
     
     optimizer = Adam(model.parameters(), lr=args.lr)
@@ -157,7 +159,6 @@ def main(args):
         f.write(str(vars(args)))
     train(model, loaders, optimizer, criterion, args)
 
-    os.system('~/git_img.sh')
     
 
 if __name__ == '__main__': 

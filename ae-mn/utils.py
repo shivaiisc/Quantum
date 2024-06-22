@@ -108,24 +108,18 @@ def load_model(model, args, best):
 
 def plot(csv_path, save_path):
     df = pd.read_csv(csv_path)
-    print(df.columns)
     train_data = sorted(df.columns)[:len(df.columns)//2]
     val_data = sorted(df.columns)[len(df.columns)//2:]
-    print(train_data, val_data)
     # plt.figure(figsize=(20, 16))
     for idx, (train, val) in enumerate(zip(train_data, val_data)):
-        plt.subplot(2, 2, idx+1)
         plt.plot(df[train], label='train')
-        plt.subplot(2, 2, idx+1)
         plt.plot(df[val], label='val')
 
-        plt.gca().set_title(val[4:])
-        plt.gca().set_xlabel('epochs')
-        plt.gca().set_ylabel('loss')
-        plt.gca().legend() 
-    plt.tight_layout()
-    plt.show() 
-    plt.savefig(save_path)
+        plt.title(val[4:])
+        plt.xlabel('epochs')
+        plt.ylabel('loss')
+        plt.legend() 
+        plt.savefig(save_path + f'{val[4:]}.png')
 
 def main(args): 
     df = pd.read_csv(args.path).sort_values(by='idx') 
@@ -144,7 +138,7 @@ def main(args):
         imgs_to_pth(list(patient_df.img_path), list(patient_df.mask_path))
 
 if __name__ == '__main__': 
-    plot('./plot.csv')
+    plot('./logs/quantum_noise/3/log.csv', './logs/quantum_noise/3/log.png')
     exit()
     import argparse 
     parser = argparse.ArgumentParser() 
