@@ -2038,3 +2038,26 @@ Changes not staged for commit:
  rewrite ae-mn/logs/quantum_noise/6/plots/dice_loss.png (99%)
  rewrite ae-mn/logs/quantum_noise/6/plots/ssim_loss.png (98%)
  rewrite ae-mn/logs/quantum_noise/6/plots/total_loss.png (99%)
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   del.txt
+	modified:   logs/quantum_noise/6/log.csv
+	modified:   logs/quantum_noise/6/plots/bce_loss.png
+	modified:   logs/quantum_noise/6/plots/dice_loss.png
+	modified:   logs/quantum_noise/6/plots/ssim_loss.png
+	modified:   logs/quantum_noise/6/plots/total_loss.png
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   ../.gitignore
+
+[main fdd12f1] no comment
+ 6 files changed, 24 insertions(+)
+ rewrite ae-mn/logs/quantum_noise/6/plots/bce_loss.png (99%)
+ rewrite ae-mn/logs/quantum_noise/6/plots/dice_loss.png (99%)
+ rewrite ae-mn/logs/quantum_noise/6/plots/ssim_loss.png (99%)
+ rewrite ae-mn/logs/quantum_noise/6/plots/total_loss.png (99%)
