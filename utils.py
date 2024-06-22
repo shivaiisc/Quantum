@@ -54,10 +54,9 @@ def imgs_to_vid(pre_imgs, out_path, mask=False):
     video = cv2.VideoWriter(out_video_full_path, cv2_fourcc, 60, size) #output video name, fourcc, fps, size
 
     for i in range(len(img)): 
-        im = Image.open(img[i]).convert('L')
-        im.save('im.png')
-        exit()
-        im = ToTensor()(im).squeeze().unsqueeze(-1)
+        im = Image.open(img[i])#.convert('L')
+        im = ToTensor()(im)#.squeeze().unsqueeze(-1)
+        im = rearrange(im, 'c h w -> h w c')
         im = im * 255.0
         video.write(im.numpy().astype(np.uint8))
     video.release()
