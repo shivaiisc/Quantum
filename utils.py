@@ -54,7 +54,14 @@ def imgs_to_vid(pre_imgs, out_path, mask=False):
     video = cv2.VideoWriter(out_video_full_path, cv2_fourcc, 60, size) #output video name, fourcc, fps, size
 
     for i in range(len(img)): 
-        video.write(cv2.imread(img[i]))
+        im = cv2.imread(img[i])
+        im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+        print(im.shape)
+        if mask: 
+            print(np.max(im), np.where(im), np.std(im), np.mean(im))
+            im = np.where(im==255, 0, 255)
+            print(np.max(im), np.where(im), np.std(im), np.mean(im))
+        video.write(im)
     video.release()
 
 def imgs_to_pth(img_path, mask_path, src_path='./.data'):
