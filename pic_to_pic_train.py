@@ -54,7 +54,7 @@ def loop(model, loader, optimizer, criterion, args, mode='train'):
         pbar.set_postfix(log_dict, refresh=idx%10==0)
     loss_dct = {f'{mode}_ssim_loss': round(np.mean(ssim_loss_list), 4),
                 f'{mode}_dice_loss': round(np.mean(dice_loss_list), 4),
-                f'{mode}_bce_loss': round(np.mean(dice_loss_list), 4),
+                f'{mode}_bce_loss': round(np.mean(bce_loss_list), 4),
                 f'{mode}_total_loss': round(np.mean(total_loss_list), 4)}
     
     return loss_dct
