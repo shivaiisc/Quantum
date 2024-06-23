@@ -58,7 +58,7 @@ def imgs_to_vid(pre_imgs, out_path, mask=False):
         im = ToTensor()(im).permute(1, 2, 0)
         im = im * 255.0
         im = im.numpy().astype(np.uint8)
-        im_cv2 = cv2.imread(img[i])#[:, :, :1]
+        im_cv2 = cv2.imread(img[i])[:, :, :1]
         if mask: 
             im_cv2 = np.where(im_cv2 == 255, 0, 255)
             im_cv2 = im_cv2.astype(np.uint8)
