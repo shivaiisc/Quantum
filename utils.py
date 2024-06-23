@@ -54,11 +54,11 @@ def imgs_to_vid(pre_imgs, out_path, mask=False):
     video = cv2.VideoWriter(out_video_full_path, cv2_fourcc, 60, size) #output video name, fourcc, fps, size
 
     for i in range(len(img)): 
-        im = Image.open(img[i])#.convert('L')
-        im = ToTensor()(im).permute(1, 2, 0)
+        im = Image.open(img[i]).convert('L')
+        im = ToTensor()(im).permute(1, 2, 0).repeat(1,1,3)
         im = im * 255.0
         im = im.numpy().astype(np.uint8)
-        im_cv2 = cv2.imread(img[i])
+        im_cv2 = im#cv2.imread(img[i])
         if mask: 
             im_cv2 = np.where(im_cv2 == 255, 0, 255)
             im_cv2 = im_cv2.astype(np.uint8)
