@@ -59,6 +59,7 @@ def imgs_to_vid(pre_imgs, out_path, mask=False):
         # im = im * 255.0
         # video.write(im.numpy().astype(np.uint8))
         video.write(cv2.imread(img[i]))
+    print('bingo')
     video.release()
 
 def imgs_to_pth(img_path, mask_path, src_path='./.data'):
