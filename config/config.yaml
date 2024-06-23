@@ -1,5 +1,24 @@
+epochs : 100 
+random_split : 0 
+noise : 0.0 
+experiment : 'quantum_noise'
+model_name : 'unet' 
+batch_size : 16 
+lr : 0.001 
+early_stop : 5 
+random_csv : '/home/shivac/qml-data/csv_files/whole_298.csv' 
+train_csv : '/home/shivac/qml-data/csv_files/org_train_75.csv' 
+val_csv : '/home/shivac/qml-data/csv_files/org_val_10.csv' 
+test_csv : '/home/shivac/qml-data/csv_files/org_test_20.csv' 
+in_ch : 1  
+out_ch : 1
+n_qubits : 28 
+ssim_ratio : 0.33 
+dice_ratio : 0.33 
+bce_ratio : 0.33 
+parallel : 1
 
-
+'''
     parser.add_argument('-ep', '--epochs', type=int, default=100)
     parser.add_argument('-rs', '--random_split', type=int, default=0)
     parser.add_argument('-n', '--noise', type=float, default=0.0)
@@ -22,3 +41,4 @@
     args = parser.parse_args()
 
 
+'''
