@@ -62,7 +62,6 @@ def imgs_to_vid(pre_imgs, out_path, mask=False):
         if mask: 
             im_cv2 = np.where(im_cv2 == 255, 0, 255)
         video.write(im_cv2)
-    print('bingo')
     video.release()
 
 def imgs_to_pth(img_path, mask_path, src_path='./.data'):
