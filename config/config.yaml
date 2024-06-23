@@ -1,0 +1,24 @@
+
+
+    parser.add_argument('-ep', '--epochs', type=int, default=100)
+    parser.add_argument('-rs', '--random_split', type=int, default=0)
+    parser.add_argument('-n', '--noise', type=float, default=0.0)
+    parser.add_argument('-exp', '--experiment', type=str, default='quantum_noise')
+    parser.add_argument('-m', '--model_name', type=str, default='unet')
+    parser.add_argument('-bs', '--batch_size', type=int, default=16)
+    parser.add_argument('--lr', type=float, default=1e-3)
+    parser.add_argument('-es', '--early_stop', type=int, default=6) 
+    parser.add_argument('-rc', '--random_csv', type=str, default='../../qml-data/csv_files/whole_298.csv') 
+    parser.add_argument('-trc', '--train_csv', type=str, default='../../qml-data/csv_files/org_train_75.csv') 
+    parser.add_argument('-vc', '--val_csv', type=str, default='../../qml-data/csv_files/org_val_10.csv') 
+    parser.add_argument('-tc', '--test_csv', type=str, default='../../qml-data/csv_files/org_test_20.csv') 
+    parser.add_argument('-ic', '--in_ch', type=int, default=1)
+    parser.add_argument('-oc', '--out_ch', type=int, default=1)
+    parser.add_argument('-nq', '--n_qubits', type=int, default=28)
+    parser.add_argument('-sr', '--ssim_ratio', type=float, default=0.33)
+    parser.add_argument('-dr', '--dice_ratio', type=float, default=0.33)
+    parser.add_argument('-br', '--bce_ratio', type=float, default=0.33)
+    parser.add_argument('-p', '--parallel', type=int, default=1)
+    args = parser.parse_args()
+
+
