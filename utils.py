@@ -154,7 +154,6 @@ def main(args):
         imgs_to_vid(list(patient_df.img_path), patient)
         imgs_to_vid(list(patient_df.mask_path), patient, mask=True)
         # imgs_to_pth(list(patient_df.img_path), list(patient_df.mask_path))
-        exit()
 
 if __name__ == '__main__': 
     import argparse 
