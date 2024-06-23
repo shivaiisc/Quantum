@@ -62,6 +62,8 @@ def imgs_to_vid(pre_imgs, out_path, mask=False):
         if mask: 
             im_cv2 = np.where(im_cv2 == 255, 0, 255)
         im_cv2 = im_cv2.astype(np.uint8)
+        print(f'{im_cv2.shape = }')
+        break
         video.write(im_cv2)
     video.release()
 
