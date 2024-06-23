@@ -1,6 +1,7 @@
 *.pyc 
 *.pth
 _*
+*.mp4
 g.sh
 del.txt
 del.py
