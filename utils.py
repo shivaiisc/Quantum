@@ -60,13 +60,8 @@ def imgs_to_vid(pre_imgs, out_path, mask=False):
         im = im.numpy().astype(np.uint8)
         im_cv2 = cv2.imread(img[i])[:, :, :1]
         if mask:
-            print(np.mean(im_cv2), np.max(im_cv2), np.min(im_cv2), np.unique(im_cv2))
-            print(np.mean(im), np.max(im), np.min(im), np.unique(im_cv2))
-        print(im.shape, im_cv2.shape)
-        print(np.allclose(im, im_cv2))
-        print(np.linalg.norm(im-im_cv2))
-        break
-        video.write()
+            im_cv2 = np.where(im_cv2 == 255, 0, 255)
+        video.write(im_cv2)
     print('bingo')
     video.release()
 
