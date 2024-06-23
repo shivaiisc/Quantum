@@ -143,8 +143,10 @@ def main(args):
     print('num of patients', len(unique_patients))
     print('data columsn', df.columns)
     df = df.groupby('patient_id') 
-    for idx, patient in tqdm(enumerate(unique_patients), total=100): 
+    for idx, patient in tqdm(enumerate(unique_patients)): 
         patient_df = df.get_group(patient)
+        print(patient_df.idx)
+        exit()
         l = len(patient_df) 
         if l < 290: 
             continue 
