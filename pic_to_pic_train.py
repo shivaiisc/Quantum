@@ -112,7 +112,7 @@ def train(model, loaders, optimizer, criterion, args):
                          criterion, args, mode='test') 
         print(blue(f'Test loss: {test_loss}'))  
 
-    with open(args.logs_path + 'test_results.txt', 'w') as f:
+    with open(args.logs_path + '/test_results.txt', 'w') as f:
         f.write(f'test loss: {test_loss}')
     os.system('./g.sh&>>del.txt')
 
@@ -153,10 +153,10 @@ def main(args):
     args.save_path = f'{ckpt_dir}/{args.model_name}.pth'
     args.save_best_path = f'{ckpt_dir}/best_{args.model_name}.pth'
     logs_path = f'./logs/{args.experiment}/'
-    args.logs_path = logs_path
     if not os.path.exists(logs_path): 
         os.mkdir(logs_path) 
     logs_path += str(len(os.listdir(logs_path))) 
+    args.logs_path = logs_path
     if not os.path.exists(logs_path): 
         os.mkdir(logs_path) 
     with open(logs_path+'/config.pkl', 'wb') as f:
