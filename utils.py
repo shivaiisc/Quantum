@@ -61,7 +61,7 @@ def imgs_to_vid(pre_imgs, out_path, mask=False):
         im_cv2 = cv2.imread(img[i])
         if mask: 
             im_cv2 = np.where(im_cv2 == 255, 0, 255)
-        im_cv2 = im_cv2.astype(np.uint8)
+            im_cv2 = im_cv2.astype(np.uint8)
         video.write(im_cv2)
     video.release()
 
