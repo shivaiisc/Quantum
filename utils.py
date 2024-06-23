@@ -36,7 +36,6 @@ def imgs_to_vid(pre_imgs, out_path, mask=False):
     else:
         out_video_name = 'im.mp4'
     out_video_full_path = out_path+out_video_name
-    print(out_video_full_path)
 
     img = []
 
