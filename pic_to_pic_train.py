@@ -24,7 +24,8 @@ def loop(model, loader, optimizer, criterion, args, mode='train'):
     for idx, (x, y) in pbar: 
         x = x.to(args.device)
         y = y.to(args.device)
-        x = x + torch.randn_like(x, device=args.device)*args.noise
+        if mode == 'train':
+            x = x + torch.randn_like(x, device=args.device)*args.noise
         logits = model(x) 
         loss = criterion(logits, y)
         
@@ -118,17 +119,18 @@ def train(model, loaders, optimizer, criterion, args):
 
 
 def main(args):
+    transform = T.ToTensor()
     if args.random_split:
-        transform = T.ToTensor()
         data = Pic_to_Pic_dataset(args.random_csv, transform)
         train_data, val_data, test_data = random_split(data, [0.8, 0.1, 0.1])
  
     else:
         col = torch.nn.ModuleList([T.ColorJitter()])
-        transform = T.Compose([T.ToTensor(),
-                            T.RandomVerticalFlip(),
-                            T.RandomHorizontalFlip(),
-                            T.RandomApply(col, p=0.3)])
+        if args.transform:
+            transform = T.Compose([T.ToTensor(),
+                                T.RandomVerticalFlip(),
+                                T.RandomHorizontalFlip(),
+                                T.RandomApply(col, p=0.3)])
         train_data = Pic_to_Pic_dataset(args.train_csv, transform)
         transform = T.ToTensor()
         val_data = Pic_to_Pic_dataset(args.val_csv, transform)
@@ -191,6 +193,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser() 
     parser.add_argument('-ep', '--epochs', type=int, default=100)
     parser.add_argument('-rs', '--random_split', type=int, default=0)
+    parser.add_argument('-t', '--transform', type=int, default=0)
     parser.add_argument('-n', '--noise', type=float, default=0.0)
     parser.add_argument('-exp', '--experiment', type=str, default='quantum_noise')
     parser.add_argument('-m', '--model_name', type=str, default='unet')
