@@ -191,7 +191,7 @@ def main(args):
 if __name__ == '__main__': 
     import argparse 
     parser = argparse.ArgumentParser() 
-    parser.add_argument('-ep', '--epochs', type=int, default=100)
+    parser.add_argument('-ep', '--epochs', type=int, default=50)
     parser.add_argument('-rs', '--random_split', type=int, default=0)
     parser.add_argument('-t', '--transform', type=int, default=0)
     parser.add_argument('-n', '--noise', type=float, default=0.0)
