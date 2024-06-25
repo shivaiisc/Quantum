@@ -1,7 +1,7 @@
 import torch 
 from torchvision.transforms import ToTensor, ToPILImage
 from PIL import Image 
-from utils import pth_to_vid
+from utils import pth_to_depth_vid, pth_to_vid
 import os 
 from einops import rearrange
 from tqdm import tqdm 
@@ -10,7 +10,7 @@ def forward_hook(inst, ip, op):
     op = (op-torch.min(op))/(torch.max(op)-torch.min(op)) 
     op = rearrange(op, '1 c h w -> c 1 h w')
     op = op.repeat(1, 3, 1, 1)
-    pth_to_vid(op.cpu(), os.path.join(args.mp4_path + '.mp4'),
+    pth_to_depth_vid(op.cpu(), args.img_file, os.path.join(args.mp4_path + '.mp4'),
                frames=60)
 
 
@@ -37,6 +37,7 @@ def main(args):
         img = Image.open(img_path).convert('L') 
         img = ToTensor()(img).to(args.dev).unsqueeze(0)
         args.mp4_path = os.path.join(args.vis_dir, img_file[:-4])
+        args.img_file = img_file[:-4]
         logits = model(img)
 
         

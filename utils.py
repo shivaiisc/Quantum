@@ -1,5 +1,6 @@
 import pandas as pd 
 import matplotlib.pyplot as plt
+from torchvision.utils import make_grid
 from tqdm import tqdm 
 from einops import rearrange
 import torch 
@@ -7,7 +8,7 @@ import os
 import numpy as np
 from PIL import Image 
 import cv2 
-from torchvision.transforms import ToTensor 
+from torchvision import transforms as T
 
 
 def get_model(args): 
@@ -54,7 +55,7 @@ def imgs_to_vid(pre_imgs, out_path, mask=False):
 
     for i in range(len(img)): 
         im = Image.open(img[i]).convert('L')
-        im = ToTensor()(im).permute(1, 2, 0).repeat(1,1,3)
+        im = T.ToTensor()(im).permute(1, 2, 0).repeat(1,1,3)
         im = im * 255.0
         im = im.numpy().astype(np.uint8)
         im_cv2 = im#cv2.imread(img[i])
@@ -71,7 +72,7 @@ def imgs_to_pth(img_path, mask_path, src_path='./.data'):
     all_mask = list() 
     for im_path, mk_path in zip(img_path, mask_path): 
         # img = ToTensor()(Image.open('../../qml-data/' + im_path).convert('L'))
-        mask = ToTensor()(Image.open('../../qml-data/' + mk_path))
+        mask = T.ToTensor()(Image.open('../../qml-data/' + mk_path))
         mask = mask.to(torch.long)
 
         # mask = torch.where(mask<=0.5, 1.0, 0.0)
@@ -99,6 +100,33 @@ def pth_to_vid(pth, path='./res/vid.mp4', frames=60):
     pth = rearrange(pth, 'b c h w -> b h w c')
 
     for img in pth: 
+        video.write(img.numpy().astype(np.uint8))
+    video.release()
+
+def pth_to_depth_vid(pth, depth, path='./res/vid.mp4', frames=60): 
+
+    cv2_fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+
+    size = list(pth.shape)
+    del size[0]
+    del size[0]
+    size.reverse()
+
+    video = cv2.VideoWriter(path, cv2_fourcc, frames, size) #output video name, fourcc, fps, size
+    transform = T.Compose([T.ToTensor(),
+                           T.Resize((size[1], size[0]))])
+    im = Image.open('./res/images/{}.jpg'.format(depth))
+    mask = Image.open('./res/masks/{}.tif'.format(depth))
+    im = transform(im)
+    mask = transform(mask)
+    mask = mask.repeat(3, 1, 1).unsqueeze(0)
+    im = im.unsqueeze(0)
+
+    for img in pth: 
+        img = img.unsqueeze(0)
+        img = make_grid(torch.cat([im, img, mask], dim=0))
+        img = img* 255.0 
+        img = img.to(torch.long)
         video.write(img.numpy().astype(np.uint8))
     video.release()
 
