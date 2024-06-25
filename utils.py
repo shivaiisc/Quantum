@@ -123,7 +123,7 @@ def pth_to_depth_vid(pth, depth, path='./res/vid.mp4', frames=60):
     mask = mask.repeat(3, 1, 1).unsqueeze(0)
     im = im.unsqueeze(0)
     img = torch.cat([im,pth[0].unsqueeze(0),mask], dim=0)
-    img = make_grid(img, nrow=1)
+    img = make_grid(img, nrow=3)
 
     size = list(img.shape)
     del size[0]
@@ -131,15 +131,12 @@ def pth_to_depth_vid(pth, depth, path='./res/vid.mp4', frames=60):
 
     video = cv2.VideoWriter(path, cv2_fourcc, frames, size) #output video name, fourcc, fps, size
     for img in pth: 
-        print(f'{torch.max(img), torch.min(img), img.shape, img.dtype = }')
         img = img.unsqueeze(0)
-        img = make_grid(torch.cat([im, img, mask], dim=0), nrow=1)
+        img = make_grid(torch.cat([im, img, mask], dim=0), nrow=3)
         img = img* 255.0 
         img = img.to(torch.long).permute(1, 2, 0)
-        print(f'{torch.max(img), torch.min(img), img.shape, img.dtype = }')
         video.write(img.numpy().astype(np.uint8))
     video.release()
-
 def save_model(model, loss, args, best=False): 
     dct = {'model_state':model.module.state_dict() if args.parallel \
                             else model.state_dict()}
