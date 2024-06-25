@@ -100,8 +100,6 @@ def pth_to_vid(pth, path='./res/vid.mp4'):
     pth = rearrange(pth, 'b c h w -> b h w c')
 
     for img in pth: 
-        print(img.shape)
-        exit()
         video.write(img.numpy().astype(np.uint8))
     video.release()
 
