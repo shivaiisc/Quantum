@@ -1,4 +1,5 @@
 import pandas as pd 
+import imageio
 import matplotlib.pyplot as plt
 from torchvision.utils import make_grid
 from tqdm import tqdm 
@@ -130,14 +131,21 @@ def pth_to_depth_vid(pth, depth, path='./res/vid.mp4', frames=60):
     size.reverse()
 
     video = cv2.VideoWriter(path, cv2_fourcc, frames, size) #output video name, fourcc, fps, size
+    gif_list = list()
     for img in pth: 
         img = (img - torch.min(img))/(torch.max(img)-torch.min(img))
         img = img.unsqueeze(0)
         img = make_grid(torch.cat([im, img, mask], dim=0), nrow=3)
         img = img* 255.0 
         img = img.to(torch.long).permute(1, 2, 0)
-        video.write(img.numpy().astype(np.uint8))
+        img = img.numpy().astype(np.uint8)
+        video.write(img)
+        gif_list.append(img)
     video.release()
+    with imageio.get_writer(f'{path[:-3]}'+'gif', mode='I') as writer: 
+        for img in gif_list:
+            writer.append_data(img)
+
 def save_model(model, loss, args, best=False): 
     dct = {'model_state':model.module.state_dict() if args.parallel \
                             else model.state_dict()}
