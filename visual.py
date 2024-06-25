@@ -13,7 +13,7 @@ def forward_hook(inst, ip, op):
     ToPILImage()(cos_sim.unsqueeze(0)).save(args.mp4_path+'_cos_sim.png')
     cos_sim = rearrange(op, '1 c h w -> c (h w)')
     ch_cos_sim = cos_sim @ cos_sim.t() 
-    ToPILImage()(cos_sim.unsqueeze(0)).save(args.mp4_path+'_ch_cos_sim.png')
+    ToPILImage()(ch_cos_sim.unsqueeze(0)).save(args.mp4_path+'_ch_cos_sim.png')
     return
     op = rearrange(op, '1 c h w -> c 1 h w')
     op = op.repeat(1, 3, 1, 1)
@@ -33,7 +33,7 @@ def main(args):
         from models import UNET 
         model = UNET().to(args.dev)
         model.load_state_dict(torch.load(args.model_path)['model_state'])
-        model.down3.register_forward_hook(forward_hook)
+        model.down4.register_forward_hook(forward_hook)
 
     else:
         raise ValueError('Model Unavailable')
