@@ -10,7 +10,10 @@ def forward_hook(inst, ip, op):
     # op = (op-torch.min(op))/(torch.max(op)-torch.min(op)) 
     cos_sim = rearrange(op, '1 c h w -> (h w) c')
     cos_sim = cos_sim @ cos_sim.t() 
-    ToPILImage()(cos_sim.unsqueeze(0)).save(args.mp4_path+'cos_sim.png')
+    ToPILImage()(cos_sim.unsqueeze(0)).save(args.mp4_path+'_cos_sim.png')
+    cos_sim = rearrange(op, '1 c h w -> c (h w)')
+    ch_cos_sim = cos_sim @ cos_sim.t() 
+    ToPILImage()(cos_sim.unsqueeze(0)).save(args.mp4_path+'_ch_cos_sim.png')
     return
     op = rearrange(op, '1 c h w -> c 1 h w')
     op = op.repeat(1, 3, 1, 1)
