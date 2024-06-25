@@ -19,11 +19,14 @@ def main(args):
     if args.model_name == 'q_unet': 
         from models import Q_UNET 
         model = Q_UNET(n_qubits=args.n_qubits).to(args.dev)
+        model.load_state_dict(torch.load(args.model_path)['model_state'])
         model.qml_decoder.register_forward_hook(forward_hook)
     elif args.model_name == 'unet': 
         from models import UNET 
         model = UNET().to(args.dev)
+        model.load_state_dict(torch.load(args.model_path)['model_state'])
         model.down4.register_forward_hook(forward_hook)
+
     else:
         raise ValueError('Model Unavailable')
     imgs = os.listdir(args.img_dir)
@@ -42,6 +45,7 @@ if __name__ == '__main__':
     import argparse 
     parser = argparse.ArgumentParser(description='Inference')
     parser.add_argument('--model_name', type=str) 
+    parser.add_argument('--model_path', type=str) 
     parser.add_argument('--n_qubits', type=int, default=28) 
     parser.add_argument('--img_dir', type=str) 
     parser.add_argument('--vis_dir', type=str)
