@@ -84,7 +84,7 @@ def imgs_to_pth(img_path, mask_path, src_path='./.data'):
                     os.path.join(src_path, str(idx), 'img.png'))
     # torch.save(all_img, os.path.join(src_path, str(idx), 'img.pth'))
 
-def pth_to_vid(pth, path='./res/vid.mp4'): 
+def pth_to_vid(pth, path='./res/vid.mp4', frames=60): 
     print(path)
 
     cv2_fourcc = cv2.VideoWriter_fourcc(*'mp4v')
@@ -96,7 +96,7 @@ def pth_to_vid(pth, path='./res/vid.mp4'):
     del size[0]
     size.reverse()
 
-    video = cv2.VideoWriter(path, cv2_fourcc, 60, size) #output video name, fourcc, fps, size
+    video = cv2.VideoWriter(path, cv2_fourcc, frames, size) #output video name, fourcc, fps, size
     pth = rearrange(pth, 'b c h w -> b h w c')
 
     for img in pth: 
