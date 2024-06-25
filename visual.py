@@ -12,7 +12,7 @@ def forward_hook(inst, ip, op):
     op = op.repeat(1, 3, 1, 1)
     print(op.shape, torch.max(op), torch.min(op))
     pth_to_vid(op.cpu(), os.path.join(args.vis_dir + args.model_name+'.mp4'),
-               frames=1)
+               frames=10)
 
 
 
@@ -30,6 +30,8 @@ def main(args):
 
     else:
         raise ValueError('Model Unavailable')
+    if not os.path.exists(args.vis_dir):
+        os.mkdir(args.vis_dir)
     imgs = os.listdir(args.img_dir)
     for img_file in imgs:
         img_path = os.path.join(args.img_dir, img_file) 
