@@ -33,7 +33,7 @@ def main(args):
         from models import UNET 
         model = UNET().to(args.dev)
         model.load_state_dict(torch.load(args.model_path)['model_state'])
-        model.down4.register_forward_hook(forward_hook)
+        model.down3.register_forward_hook(forward_hook)
 
     else:
         raise ValueError('Model Unavailable')
