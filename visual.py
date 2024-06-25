@@ -9,11 +9,11 @@ from tqdm import tqdm
 def forward_hook(inst, ip, op): 
     # op = (op-torch.min(op))/(torch.max(op)-torch.min(op)) 
     cos_sim = rearrange(op, '1 c h w -> (h w) c')
+    norm = torch.linalg.norm(cos_sim, dim=1).view(-1, 1)
+    norm = norm @ norm.t()
     cos_sim = cos_sim @ cos_sim.t() 
+    cos_sim = cos_sim/norm
     ToPILImage()(cos_sim.unsqueeze(0)).save(args.mp4_path+'_cos_sim.png')
-    cos_sim = rearrange(op, '1 c h w -> c (h w)')
-    ch_cos_sim = cos_sim @ cos_sim.t() 
-    ToPILImage()(ch_cos_sim.unsqueeze(0)).save(args.mp4_path+'_ch_cos_sim.png')
     return
     op = rearrange(op, '1 c h w -> c 1 h w')
     op = op.repeat(1, 3, 1, 1)
