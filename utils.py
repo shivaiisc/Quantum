@@ -131,6 +131,7 @@ def pth_to_depth_vid(pth, depth, path='./res/vid.mp4', frames=60):
 
     video = cv2.VideoWriter(path, cv2_fourcc, frames, size) #output video name, fourcc, fps, size
     for img in pth: 
+        img = (img - torch.min(img))/(torch.max(img)-torch.min(img))
         img = img.unsqueeze(0)
         img = make_grid(torch.cat([im, img, mask], dim=0), nrow=3)
         img = img* 255.0 
