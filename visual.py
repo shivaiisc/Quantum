@@ -12,6 +12,9 @@ def forward_hook(inst, ip, op):
     norm = torch.linalg.norm(cos_sim, dim=1).view(-1, 1)
     norm = norm @ norm.t()
     cos_sim = cos_sim @ cos_sim.t() 
+    eye = torch.ones_like(cos_sim, device=cos_sim.device) -\
+        torch.eye(cos_sim.shape[0], device=cos_sim.device) 
+    cos_sim = cos_sim * eye 
     cos_sim = cos_sim/norm
     ToPILImage()(cos_sim.unsqueeze(0)).save(args.mp4_path+'_cos_sim.png')
     return
