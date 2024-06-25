@@ -37,7 +37,7 @@ def main(args):
         img_path = os.path.join(args.img_dir, img_file) 
         img = Image.open(img_path).convert('L') 
         img = ToTensor()(img).to(args.dev).unsqueeze(0)
-        args.vis_dir += img_file[-4:]
+        args.vis_dir += img_file[:-4]
         logits = model(img)
         print(logits.shape)
         exit()
