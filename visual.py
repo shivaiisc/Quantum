@@ -35,7 +35,7 @@ def main(args):
         model.qml_lay.register_forward_hook(forward_hook)
         model.qml_decoder.register_forward_hook(forward_hook)
         model.up1.register_forward_hook(forward_hook)
-        model.up2.register_forward_hook(forward_hook)
+        # model.up2.register_forward_hook(forward_hook)
     elif args.model_name == 'unet': 
         from models import UNET 
         model = UNET().to(args.dev)
@@ -44,7 +44,7 @@ def main(args):
         model.down3.register_forward_hook(forward_hook)
         model.down4.register_forward_hook(forward_hook)
         model.up1.register_forward_hook(forward_hook)
-        model.up2.register_forward_hook(forward_hook)
+        # model.up2.register_forward_hook(forward_hook)
 
     else:
         raise ValueError('Model Unavailable')
