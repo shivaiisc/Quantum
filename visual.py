@@ -10,7 +10,7 @@ def forward_hook(inst, ip, op):
     op = (op-torch.min(op))/(torch.max(op)-torch.min(op)) 
     op = rearrange(op, '1 c h w -> c 1 h w')
     op = op.repeat(1, 3, 1, 1)
-    pth_to_vid(op.cpu(), os.path.join(args.vis_dir + '.mp4'),
+    pth_to_vid(op.cpu(), os.path.join(args.mp4_path + '.mp4'),
                frames=60)
 
 
@@ -36,7 +36,7 @@ def main(args):
         img_path = os.path.join(args.img_dir, img_file) 
         img = Image.open(img_path).convert('L') 
         img = ToTensor()(img).to(args.dev).unsqueeze(0)
-        args.vis_dir += img_file[:-4]
+        args.mp4_path = os.path.join(args.vis_dir, img_file[:-4])
         logits = model(img)
 
         
