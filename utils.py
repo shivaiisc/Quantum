@@ -85,6 +85,7 @@ def imgs_to_pth(img_path, mask_path, src_path='./.data'):
     # torch.save(all_img, os.path.join(src_path, str(idx), 'img.pth'))
 
 def pth_to_vid(pth, path='./res/vid.mp4'): 
+    print(path)
 
     cv2_fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 

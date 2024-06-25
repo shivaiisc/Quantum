@@ -11,7 +11,7 @@ def forward_hook(inst, ip, op):
     op = rearrange(op, '1 c h w -> c h w 1')
     op = op.repeat(1, 1, 1, 3)
     print(op.shape, torch.max(op), torch.min(op))
-    pth_to_vid(op.cpu(), os.path.join(args.vis_dir + repr(inst)+ '.mp4'))
+    pth_to_vid(op.cpu(), os.path.join(args.vis_dir + args.model_name+'.mp4'))
 
 
 
