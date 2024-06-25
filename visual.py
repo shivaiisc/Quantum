@@ -13,7 +13,8 @@ def forward_hook(inst, ip, op):
     norm = norm @ norm.t()
     cos_sim = cos_sim @ cos_sim.t() 
     cos_sim = cos_sim/norm
-    ToPILImage()(cos_sim.unsqueeze(0)).save(args.mp4_path+'_cos_sim.png')
+    idx = len(os.listdir(args.vis_dir))
+    ToPILImage()(cos_sim.unsqueeze(0)).save(args.mp4_path+f'_{idx}_cos_sim.png')
     return
     op = rearrange(op, '1 c h w -> c 1 h w')
     op = op.repeat(1, 3, 1, 1)
@@ -33,6 +34,8 @@ def main(args):
         from models import UNET 
         model = UNET().to(args.dev)
         model.load_state_dict(torch.load(args.model_path)['model_state'])
+        # model.down2.register_forward_hook(forward_hook)
+        # model.down3.register_forward_hook(forward_hook)
         model.down4.register_forward_hook(forward_hook)
 
     else:
