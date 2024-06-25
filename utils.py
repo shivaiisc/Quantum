@@ -136,6 +136,7 @@ def pth_to_depth_vid(pth, depth, path='./res/vid.mp4', frames=60):
         img = (img - torch.min(img))/(torch.max(img)-torch.min(img))
         img = img.unsqueeze(0)
         img = make_grid(torch.cat([im, img, mask], dim=0), nrow=3)
+        img = T.Resize((128, 128*3))(img)
         img = img* 255.0 
         img = img.to(torch.long).permute(1, 2, 0)
         img = img.numpy().astype(np.uint8)
