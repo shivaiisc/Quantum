@@ -10,8 +10,9 @@ def forward_hook(inst, ip, op):
     op = (op-torch.min(op))/(torch.max(op)-torch.min(op)) 
     op = rearrange(op, '1 c h w -> c 1 h w')
     op = op.repeat(1, 3, 1, 1)
-    pth_to_depth_vid(op.cpu(), args.img_file, os.path.join(args.mp4_path + '.mp4'),
-               frames=60)
+    pth_to_depth_vid(op.cpu(), args.img_file, os.path.join(args.mp4_path + '.mp4'))
+    # pth_to_vid(op.cpu(), os.path.join(args.mp4_path + '.mp4'))
+    
 
 
 
