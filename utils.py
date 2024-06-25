@@ -127,6 +127,8 @@ def pth_to_depth_vid(pth, depth, path='./res/vid.mp4', frames=60):
         img = make_grid(torch.cat([im, img, mask], dim=0))
         img = img* 255.0 
         img = img.to(torch.long)
+        print(img.shape)
+        exit()
         video.write(img.numpy().astype(np.uint8))
     video.release()
 
