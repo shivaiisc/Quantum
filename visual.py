@@ -13,7 +13,7 @@ def forward_hook(inst, ip, op):
     norm = norm @ norm.t()
     cos_sim = cos_sim @ cos_sim.t() 
     cos_sim = cos_sim/norm
-    idx = len(os.listdir(args.vis_dir))
+    idx = len(os.listdir(args.vis_path))
     ToPILImage()(cos_sim.unsqueeze(0)).save(args.mp4_path+f'_{idx}_cos_sim.png')
     return
     op = rearrange(op, '1 c h w -> c 1 h w')
@@ -32,7 +32,6 @@ def main(args):
         model.down3.register_forward_hook(forward_hook)
         model.down4.register_forward_hook(forward_hook)
         model.qml_encoder.register_forward_hook(forward_hook)
-        model.qml_lay.register_forward_hook(forward_hook)
         model.qml_decoder.register_forward_hook(forward_hook)
         model.up1.register_forward_hook(forward_hook)
         # model.up2.register_forward_hook(forward_hook)
@@ -55,9 +54,12 @@ def main(args):
         img_path = os.path.join(args.img_dir, img_file) 
         img = Image.open(img_path).convert('L') 
         img = ToTensor()(img).to(args.dev).unsqueeze(0)
-        args.mp4_path = os.path.join(args.vis_dir, img_file[:-4])
+        args.vis_path = os.path.join(args.vis_dir, img_file[:-4])
+        if not os.path.exists(args.vis_path):
+            os.mkdir(args.vis_path)
+        args.mp4_path = os.path.join(args.vis_dir, args.vis_path, img_file[:-4])
         args.img_file = img_file[:-4]
-        logits = model(img)
+        _ = model(img)
 
         
 
