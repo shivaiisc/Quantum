@@ -56,6 +56,7 @@ def main(args):
         os.mkdir(args.vis_dir)
     imgs = os.listdir(args.img_dir)
     for img_file in tqdm(imgs):
+        break
         args.gen = gener(lst)
         img_path = os.path.join(args.img_dir, img_file) 
         img = Image.open(img_path).convert('L') 
@@ -67,16 +68,7 @@ def main(args):
         args.img_file = img_file[:-4]
         _ = model(img)
 
-    if args.model_name == 'q_unet': 
-        dct = {'down3': [], 
-               'down4': [],
-               'qml_encoder': [],
-                'qml_decoder': [],
-               'up1': []}
-    elif args.model_name == 'unet': 
-        dct = {'down3': [], 
-               'down4': [],
-               'up1': []}
+    dct = {ins: [] for ins in lst}
     dirs = os.listdir('./res/vis/')
     for d in dirs: 
         img_files = list()
@@ -84,8 +76,16 @@ def main(args):
         for depth in os.listdir(dir):
             depth = os.path.join(dir, depth)
             for img_path in os.listdir(depth):
-                img_files.append(os.path.join(depth, img_path))
+                for ins in lst:
+                    if ins in img_path: 
+                        dct[ins].append(os.path.join(depth, img_path))
+        for ins in lst:
+            mp4_path = '/'.join(dct[ins][0].split('/')[:-2])
+            mp4_path += f'/{ins}_feat.mp4'
+            feat_to_vid(sorted(dct[ins], key=lambda k: int(k.split('/')[-2])),
+                        mp4_path)
         break
+        
         
 
 
