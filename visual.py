@@ -78,7 +78,7 @@ def main(args):
         mp4_path = '/'.join(dct[ins][0].split('/')[:-2])
         mp4_path += f'/{ins}_feat'
         feat_to_vid(sorted(dct[ins], key=lambda k: int(k.split('/')[-2])),
-                    mp4_path)
+                    mp4_path, 1)
     
     
     

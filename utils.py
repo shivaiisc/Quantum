@@ -27,7 +27,7 @@ def get_model(args):
         exit()
     return model
 
-def feat_to_vid(pre_imgs, out_path):
+def feat_to_vid(pre_imgs, out_path, frames):
 
     out_video_full_path = out_path+'.mp4'
 
@@ -39,7 +39,7 @@ def feat_to_vid(pre_imgs, out_path):
     del size[2]
     size.reverse()
 
-    video = cv2.VideoWriter(out_video_full_path, cv2_fourcc, 60, size) #output video name, fourcc, fps, size
+    video = cv2.VideoWriter(out_video_full_path, cv2_fourcc, frames, size) #output video name, fourcc, fps, size
 
     gif_list = list()
     for i in range(len(pre_imgs)): 
