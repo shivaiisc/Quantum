@@ -56,7 +56,6 @@ def main(args):
         os.mkdir(args.vis_dir)
     imgs = os.listdir(args.img_dir)
     for img_file in tqdm(imgs):
-        break
         args.gen = gener(lst)
         img_path = os.path.join(args.img_dir, img_file) 
         img = Image.open(img_path).convert('L') 
@@ -70,7 +69,7 @@ def main(args):
 
     dct = {ins: [] for ins in lst}
     dirs = os.listdir('./res/vis/')
-    for d in dirs: 
+    for d in tqdm(dirs): 
         img_files = list()
         dir = os.path.join('./res/vis/', d)
         for depth in os.listdir(dir):
@@ -84,7 +83,7 @@ def main(args):
             mp4_path += f'/{ins}_feat'
             feat_to_vid(sorted(dct[ins], key=lambda k: int(k.split('/')[-2])),
                         mp4_path)
-        break
+        
         
         
 
