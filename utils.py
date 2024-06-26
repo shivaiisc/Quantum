@@ -41,14 +41,21 @@ def feat_to_vid(pre_imgs, out_path):
 
     video = cv2.VideoWriter(out_video_full_path, cv2_fourcc, 60, size) #output video name, fourcc, fps, size
 
+    gif_list = list()
     for i in range(len(pre_imgs)): 
         im = Image.open(pre_imgs[i]).convert('L')
         im = T.ToTensor()(im).permute(1, 2, 0).repeat(1,1,3)
         im = im * 255.0
         im = im.numpy().astype(np.uint8)
         im_cv2 = im
+        gif_list.append(im_cv2)
         video.write(im_cv2)
     video.release()
+    
+    with imageio.get_writer(f'{out_path}'+'gif', mode='I') as writer: 
+        for img in gif_list:
+            writer.append_data(img)
+
 
 
 def imgs_to_vid(pre_imgs, out_path, mask=False):

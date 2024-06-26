@@ -81,7 +81,7 @@ def main(args):
                         dct[ins].append(os.path.join(depth, img_path))
         for ins in lst:
             mp4_path = '/'.join(dct[ins][0].split('/')[:-2])
-            mp4_path += f'/{ins}_feat.mp4'
+            mp4_path += f'/{ins}_feat'
             feat_to_vid(sorted(dct[ins], key=lambda k: int(k.split('/')[-2])),
                         mp4_path)
         break
