@@ -68,22 +68,20 @@ def main(args):
         _ = model(img)
 
     dct = {ins: [] for ins in lst}
-    for d in tqdm(args.vis_dir): 
-        dir = os.path.join(args.vis_dir, d)
-        for depth in os.listdir(dir):
-            depth = os.path.join(dir, depth)
-            for img_path in os.listdir(depth):
-                for ins in lst:
-                    if ins in img_path: 
-                        dct[ins].append(os.path.join(depth, img_path))
-        for ins in lst:
-            mp4_path = '/'.join(dct[ins][0].split('/')[:-2])
-            mp4_path += f'/{ins}_feat'
-            feat_to_vid(sorted(dct[ins], key=lambda k: int(k.split('/')[-2])),
-                        mp4_path)
-        
-        
-        
+    for depth in tqdm(os.listdir(args.vis_dir)):
+        depth = os.path.join(args.vis_dir, depth)
+        for img_path in os.listdir(depth):
+            for ins in lst:
+                if ins in img_path: 
+                    dct[ins].append(os.path.join(depth, img_path))
+    for ins in lst:
+        mp4_path = '/'.join(dct[ins][0].split('/')[:-2])
+        mp4_path += f'/{ins}_feat'
+        feat_to_vid(sorted(dct[ins], key=lambda k: int(k.split('/')[-2])),
+                    mp4_path)
+    
+    
+    
 
 
 if __name__ == '__main__': 
