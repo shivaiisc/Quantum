@@ -38,8 +38,7 @@ def main(args):
         model.qml_decoder.register_forward_hook(forward_hook)
         model.up1.register_forward_hook(forward_hook)
         # model.up2.register_forward_hook(forward_hook)
-        args.gen = gener(['down3', 'down4', 'qml_encoder',
-                   'qml_decoder', 'up1'])
+        lst = ['down3', 'down4', 'qml_encoder', 'qml_decoder', 'up1']
     elif args.model_name == 'unet': 
         from models import UNET 
         model = UNET().to(args.dev)
@@ -49,7 +48,7 @@ def main(args):
         model.down4.register_forward_hook(forward_hook)
         model.up1.register_forward_hook(forward_hook)
         # model.up2.register_forward_hook(forward_hook)
-        args.gen = gener(['down3', 'down4', 'up1'])
+        lst = ['down3', 'down4', 'up1']
     else:
         raise ValueError('Model Unavailable')
 
@@ -57,6 +56,7 @@ def main(args):
         os.mkdir(args.vis_dir)
     imgs = os.listdir(args.img_dir)
     for img_file in tqdm(imgs):
+        args.gen = gener(lst)
         img_path = os.path.join(args.img_dir, img_file) 
         img = Image.open(img_path).convert('L') 
         img = ToTensor()(img).to(args.dev).unsqueeze(0)
