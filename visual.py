@@ -57,7 +57,7 @@ def main(args):
         args.vis_path = os.path.join(args.vis_dir, img_file[:-4])
         if not os.path.exists(args.vis_path):
             os.mkdir(args.vis_path)
-        args.mp4_path = os.path.join(args.vis_dir, args.vis_path, img_file[:-4])
+        args.mp4_path = os.path.join(args.vis_path, img_file[:-4])
         args.img_file = img_file[:-4]
         _ = model(img)
 
