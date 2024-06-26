@@ -1,7 +1,7 @@
 import torch 
 from torchvision.transforms import ToTensor, ToPILImage
 from PIL import Image 
-from utils import pth_to_depth_vid, pth_to_vid
+from utils import pth_to_depth_vid, feat_to_vid
 import os 
 from einops import rearrange
 from tqdm import tqdm 
@@ -13,7 +13,7 @@ def forward_hook(inst, ip, op):
     norm = norm @ norm.t()
     cos_sim = cos_sim @ cos_sim.t() 
     cos_sim = cos_sim/norm
-    idx = len(os.listdir(args.vis_path))
+    idx = next(args.gen)#len(os.listdir(args.vis_path))
     ToPILImage()(cos_sim.unsqueeze(0)).save(args.mp4_path+f'_{idx}_cos_sim.png')
     return
     op = rearrange(op, '1 c h w -> c 1 h w')
@@ -21,6 +21,9 @@ def forward_hook(inst, ip, op):
     pth_to_depth_vid(op.cpu(), args.img_file, os.path.join(args.mp4_path + '.mp4'))
     # pth_to_vid(op.cpu(), os.path.join(args.mp4_path + '.mp4'))
     
+def gener(lst):
+    for ins in lst:
+        yield ins
 
 
 
@@ -35,6 +38,8 @@ def main(args):
         model.qml_decoder.register_forward_hook(forward_hook)
         model.up1.register_forward_hook(forward_hook)
         # model.up2.register_forward_hook(forward_hook)
+        args.gen = gener(['down3', 'down4', 'qml_encoder',
+                   'qml_decoder', 'up1'])
     elif args.model_name == 'unet': 
         from models import UNET 
         model = UNET().to(args.dev)
@@ -44,9 +49,10 @@ def main(args):
         model.down4.register_forward_hook(forward_hook)
         model.up1.register_forward_hook(forward_hook)
         # model.up2.register_forward_hook(forward_hook)
-
+        args.gen = gener(['down3', 'down4', 'up1'])
     else:
         raise ValueError('Model Unavailable')
+
     if not os.path.exists(args.vis_dir):
         os.mkdir(args.vis_dir)
     imgs = os.listdir(args.img_dir)
@@ -61,6 +67,25 @@ def main(args):
         args.img_file = img_file[:-4]
         _ = model(img)
 
+    if args.model_name == 'q_unet': 
+        dct = {'down3': [], 
+               'down4': [],
+               'qml_encoder': [],
+                'qml_decoder': [],
+               'up1': []}
+    elif args.model_name == 'unet': 
+        dct = {'down3': [], 
+               'down4': [],
+               'up1': []}
+    dirs = os.listdir('./res/vis/')
+    for d in dirs: 
+        img_files = list()
+        dir = os.path.join('./res/vis/', d)
+        for depth in os.listdir(dir):
+            depth = os.path.join(dir, depth)
+            for img_path in os.listdir(depth):
+                img_files.append(os.path.join(depth, img_path))
+        break
         
 
 

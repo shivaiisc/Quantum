@@ -27,6 +27,29 @@ def get_model(args):
         exit()
     return model
 
+def feat_to_vid(pre_imgs, out_path):
+
+    out_video_full_path = out_path+'.mp4'
+
+
+    cv2_fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+
+    frame = cv2.imread(pre_imgs[0])
+    size = list(frame.shape)
+    del size[2]
+    size.reverse()
+
+    video = cv2.VideoWriter(out_video_full_path, cv2_fourcc, 60, size) #output video name, fourcc, fps, size
+
+    for i in range(len(pre_imgs)): 
+        im = Image.open(pre_imgs[i]).convert('L')
+        im = T.ToTensor()(im).permute(1, 2, 0).repeat(1,1,3)
+        im = im * 255.0
+        im = im.numpy().astype(np.uint8)
+        im_cv2 = im
+        video.write(im_cv2)
+    video.release()
+
 
 def imgs_to_vid(pre_imgs, out_path, mask=False):
     path = '/home/shivac/qml-data/'
