@@ -68,10 +68,8 @@ def main(args):
         _ = model(img)
 
     dct = {ins: [] for ins in lst}
-    dirs = os.listdir('./res/vis/')
-    for d in tqdm(dirs): 
-        img_files = list()
-        dir = os.path.join('./res/vis/', d)
+    for d in tqdm(args.vis_dir): 
+        dir = os.path.join(args.vis_dir, d)
         for depth in os.listdir(dir):
             depth = os.path.join(dir, depth)
             for img_path in os.listdir(depth):

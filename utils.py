@@ -52,7 +52,7 @@ def feat_to_vid(pre_imgs, out_path):
         video.write(im_cv2)
     video.release()
     
-    with imageio.get_writer(f'{out_path}'+'gif', mode='I') as writer: 
+    with imageio.get_writer(f'{out_path}'+'.gif', mode='I') as writer: 
         for img in gif_list:
             writer.append_data(img)
 
