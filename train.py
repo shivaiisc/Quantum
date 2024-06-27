@@ -14,6 +14,7 @@ from tqdm import tqdm
 from einops import rearrange
 import os 
 
+
 def loop(model, loader, optimizer, criterion, args, mode='train'): 
     pbar = tqdm(enumerate(loader)) 
     pbar.set_description(f'epochs:{args.curr_epoch}/{args.epochs}')
@@ -23,11 +24,14 @@ def loop(model, loader, optimizer, criterion, args, mode='train'):
     total_loss_list = list()
     if args.experiment == 'rcnn': 
         model.missed = 0
+        model.faster_rcnn.eval() 
     for idx, (x, y) in pbar: 
+        if idx > 100:
+            break
         x = x.to(args.device)
         y = y.to(args.device)
-        if mode == 'train':
-            x = x + torch.randn_like(x, device=args.device)*args.noise
+        # if mode == 'train':
+        #     x = x + torch.randn_like(x, device=args.device)*args.noise
         logits = model(x) 
         loss = criterion(logits, y)
         
@@ -56,7 +60,6 @@ def loop(model, loader, optimizer, criterion, args, mode='train'):
         total_loss_list.append(log_dict['total_loss'])
         # pbar.set_postfix({**metrics, **log_dict})
         pbar.set_postfix(log_dict, refresh=idx%10==0)
-    print(f'{model.missed = }')
     loss_dct = {f'{mode}_ssim_loss': round(np.mean(ssim_loss_list), 4),
                 f'{mode}_dice_loss': round(np.mean(dice_loss_list), 4),
                 f'{mode}_bce_loss': round(np.mean(bce_loss_list), 4),
@@ -140,8 +143,8 @@ def main(args):
         val_data = Pic_to_Pic_dataset(args.val_csv, transform)
         test_data = Pic_to_Pic_dataset(args.test_csv, transform)
     loaders = {'train': DataLoader(train_data, args.batch_size),
-               'val': DataLoader(val_data, args.batch_size*2),
-               'test': DataLoader(test_data, args.batch_size*2)} 
+               'val': DataLoader(val_data, args.batch_size),
+               'test': DataLoader(test_data, args.batch_size)} 
     print(f'{len(train_data) = }')
     print(f'{len(val_data) = }')
     print(f'{len(test_data) = }')

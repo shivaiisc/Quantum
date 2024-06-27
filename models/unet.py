@@ -231,8 +231,8 @@ class RCNN_UNET(nn.Module):
         cy = max(cy, 50) 
         cx = min(cx, 398) 
         cy = min(cy, 270)
-        x1 = cx + 50 
-        x2 = cx - 50 
+        x1 = cx - 50 
+        x2 = cx + 50 
         y1 = cy - 50 
         y2 = cy + 50 
         return x1, y1, x2, y2
@@ -240,15 +240,15 @@ class RCNN_UNET(nn.Module):
     
     def forward(self, x): 
         with torch.no_grad():
-            _, frcnn_output = self.faster_rcnn(x)
+            _, frcnn_output = self.faster_rcnn(x, None)
             boxes = frcnn_output['boxes'] 
-            if boxes.shape != (1, 4): 
-                self.missed += 1
-                res = self.unet(x) 
-                return res 
+        if boxes.shape != (1, 4): 
+            self.missed += 1
+            res = self.unet(x) 
+            return res 
         res = torch.zeros_like(x)
         x1, y1, x2, y2 = self.corn_to_centre(boxes[0])
-        x = crop(x, x1, y1, x2-x1, y2-y1)
+        x = crop(x, x1, y1, x2-x1, y2-y1).detach()
         res[:, :, x1:x2, y1:y2] = self.unet(x)
         return res
  
@@ -262,6 +262,7 @@ if __name__ == '__main__':
     # img = torch.randn(1, 1, 100, 100).float().cuda()
     # model = UNET(in_ch=2, out_ch=1).cuda() 
     model = RCNN_UNET(in_ch=1, out_ch=1).cuda() 
+    model.train()
     
     img = img.cuda()
     logits = model(img.cuda())
