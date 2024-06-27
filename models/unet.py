@@ -1,4 +1,6 @@
+from PIL import Image
 import torch 
+from torchvision.transforms import ToTensor
 from torchvision.transforms.functional import crop
 import os 
 import yaml
@@ -199,7 +201,7 @@ class Small_UNET(nn.Module):
 class RCNN_UNET(nn.Module): 
     def __init__(self, in_ch=1, out_ch=1, threshold = 0.7): 
         super().__init__()
-        self.unet = Small_UNET(in_ch, out_ch) 
+        self.unet = UNET(in_ch, out_ch) 
         self.missed = 0
         f = open('./faster_rcnn/config/voc.yaml', 'r')
         config = yaml.safe_load(f)
@@ -241,7 +243,9 @@ class RCNN_UNET(nn.Module):
     def forward(self, x): 
         with torch.no_grad():
             _, frcnn_output = self.faster_rcnn(x, None)
-            boxes = frcnn_output['boxes'] 
+            boxes = torch.tensor([])
+            if frcnn_output:
+                boxes = frcnn_output['boxes'] 
         if boxes.shape != (1, 4): 
             self.missed += 1
             res = self.unet(x) 
@@ -259,6 +263,8 @@ class RCNN_UNET(nn.Module):
 if __name__ == '__main__': 
     torch.manual_seed(0)
     img = torch.randn(1, 1, 448, 320).float().cuda()
+    img = Image.open('/home/shivac/qml-data/MEDVID0001_M_20210908_130347_0001_IMAGES/0/img.png').convert('L')
+    img = ToTensor()(img).cuda()
     # img = torch.randn(1, 1, 100, 100).float().cuda()
     # model = UNET(in_ch=2, out_ch=1).cuda() 
     model = RCNN_UNET(in_ch=1, out_ch=1).cuda() 
