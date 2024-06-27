@@ -13,6 +13,9 @@ from torchvision import transforms as T
 
 
 def get_model(args): 
+    if args.model_name == 'rcnn_unet': 
+        from models import RCNN_UNET 
+        model = RCNN_UNET(args.in_ch, args.out_ch, args.threshold).to(args.device)
     if args.model_name == 'unet':
         from models import UNET
         model = UNET(in_ch=args.in_ch, out_ch=args.out_ch).to(args.device)

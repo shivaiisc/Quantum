@@ -1,8 +1,12 @@
 import torch 
+from torchvision.transforms.functional import crop
+import os 
+import yaml
 from einops import rearrange
 from torch.nn import functional as F
-from torch import bilinear, nn 
+from torch import bilinear, nn, threshold 
 import pennylane as qml 
+from faster_rcnn.model.faster_rcnn import FasterRCNN
 
 
 class Quanv(nn.Module):
@@ -192,6 +196,64 @@ class Small_UNET(nn.Module):
 
         return self.out(x)
 
+class RCNN_UNET(nn.Module): 
+    def __init__(self, in_ch=1, out_ch=1, threshold = 0.7): 
+        super().__init__()
+        self.unet = Small_UNET(in_ch, out_ch) 
+        self.missed = 0
+        f = open('./faster_rcnn/config/voc.yaml', 'r')
+        config = yaml.safe_load(f)
+        model_config = config['model_params']
+        train_config = config['train_params']
+        f.close()
+        faster_rcnn_model = FasterRCNN(model_config, num_classes=2)
+        faster_rcnn_model.eval()
+        faster_rcnn_model.load_state_dict(torch.load(os.path.join('faster_rcnn', 
+                                                                train_config['task_name'],
+                                                                train_config['ckpt_name'])))
+    
+        faster_rcnn_model.roi_head.low_score_threshold = threshold
+        self.faster_rcnn = faster_rcnn_model
+        for p in self.faster_rcnn.parameters():
+            p.requires_grad = False
+
+    def corn_to_centre(self, box): 
+        x1, y1, x2, y2 = box
+        x1 = int(x1)
+        x2 = int(x2)
+        y1 = int(y1)
+        y2 = int(y2)
+        w = y2-y1
+        h = x2-x1
+        cx = x1 + w//2 
+        cy = y1 + h//2 
+        cx = max(cx, 50)
+        cy = max(cy, 50) 
+        cx = min(cx, 398) 
+        cy = min(cy, 270)
+        x1 = cx + 50 
+        x2 = cx - 50 
+        y1 = cy - 50 
+        y2 = cy + 50 
+        return x1, y1, x2, y2
+
+    
+    def forward(self, x): 
+        with torch.no_grad():
+            _, frcnn_output = self.faster_rcnn(x)
+            boxes = frcnn_output['boxes'] 
+            if boxes.shape != (1, 4): 
+                self.missed += 1
+                res = self.unet(x) 
+                return res 
+        res = torch.zeros_like(x)
+        x1, y1, x2, y2 = self.corn_to_centre(boxes[0])
+        x = crop(x, x1, y1, x2-x1, y2-y1)
+        res[:, :, x1:x2, y1:y2] = self.unet(x)
+        return res
+ 
+
+
 
 
 if __name__ == '__main__': 
@@ -199,7 +261,7 @@ if __name__ == '__main__':
     img = torch.randn(1, 1, 448, 320).float().cuda()
     # img = torch.randn(1, 1, 100, 100).float().cuda()
     # model = UNET(in_ch=2, out_ch=1).cuda() 
-    model = Small_UNET(in_ch=1, out_ch=1).cuda() 
+    model = RCNN_UNET(in_ch=1, out_ch=1).cuda() 
     
     img = img.cuda()
     logits = model(img.cuda())

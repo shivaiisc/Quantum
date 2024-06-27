@@ -21,8 +21,6 @@ def loop(model, loader, optimizer, criterion, args, mode='train'):
     dice_loss_list = list() 
     bce_loss_list = list() 
     total_loss_list = list()
-    if args.experiment == 'rcnn': 
-        model.missed = 0
     for idx, (x, y) in pbar: 
         x = x.to(args.device)
         y = y.to(args.device)
@@ -48,7 +46,6 @@ def loop(model, loader, optimizer, criterion, args, mode='train'):
                     'bce_loss': round(bce_loss.item(), 4),
                     'total_loss': round(loss.item(), 4),
                     'mode': mode,
-                    'missed': model.missed,
                     'es': f'{args.early_stopping_idx}/{args.early_stop}'}
         ssim_loss_list.append(log_dict['ssim_loss'])
         dice_loss_list.append(log_dict['dice_loss'])
@@ -56,9 +53,6 @@ def loop(model, loader, optimizer, criterion, args, mode='train'):
         total_loss_list.append(log_dict['total_loss'])
         # pbar.set_postfix({**metrics, **log_dict})
         pbar.set_postfix(log_dict, refresh=idx%10==0)
-        if idx > 1000:
-            break
-    print(f'{model.missed = }')
     loss_dct = {f'{mode}_ssim_loss': round(np.mean(ssim_loss_list), 4),
                 f'{mode}_dice_loss': round(np.mean(dice_loss_list), 4),
                 f'{mode}_bce_loss': round(np.mean(bce_loss_list), 4),
@@ -175,8 +169,7 @@ def main(args):
         os.mkdir(args.plot_path)
     config_txt_path = f'{logs_path}/config.txt'
     
-    optimizer = Adam(params = filter(lambda p: p.requires_grad, model.parameters()),
-                     lr=args.lr)
+    optimizer = Adam(model.parameters(), lr=args.lr)
     criterion = SSIM_DICE_BCE() 
     
     row = ['train_ssim_loss', 'train_dice_loss', \
@@ -218,7 +211,6 @@ if __name__ == '__main__':
     parser.add_argument('-dr', '--dice_ratio', type=float, default=0.33)
     parser.add_argument('-br', '--bce_ratio', type=float, default=0.33)
     parser.add_argument('-p', '--parallel', type=int, default=1)
-    parser.add_argument('-th', '--threshold', type=float, default=0.7)
     args = parser.parse_args()
 
     args.device = 'cuda'
