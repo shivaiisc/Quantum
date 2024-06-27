@@ -26,8 +26,6 @@ def loop(model, loader, optimizer, criterion, args, mode='train'):
         model.missed = 0
         model.faster_rcnn.eval() 
     for idx, (x, y) in pbar: 
-        if idx > 100:
-            break
         x = x.to(args.device)
         y = y.to(args.device)
         # if mode == 'train':
