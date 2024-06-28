@@ -220,9 +220,9 @@ if __name__ == '__main__':
     parser.add_argument('-br', '--bce_ratio', type=float, default=0.33)
     parser.add_argument('-p', '--parallel', type=int, default=1)
     parser.add_argument('-th', '--threshold', type=float, default=0.7)
+    parser.add_argument('-dev', '--device', type=str, default='cuda:0')
     args = parser.parse_args()
 
-    args.device = 'cuda'
     args.early_stopping_idx = 0 
 
     main(args)
