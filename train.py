@@ -50,7 +50,7 @@ def loop(model, loader, optimizer, criterion, args, mode='train'):
                     'bce_loss': round(bce_loss.item(), 4),
                     'total_loss': round(loss.item(), 4),
                     'mode': mode,
-                    'missed': model.missed,
+                    # 'missed': model.missed,
                     'es': f'{args.early_stopping_idx}/{args.early_stop}'}
         ssim_loss_list.append(log_dict['ssim_loss'])
         dice_loss_list.append(log_dict['dice_loss'])
@@ -126,27 +126,22 @@ def train(model, loaders, optimizer, criterion, args):
 def main(args):
     transform = T.ToTensor()
     if args.random_split:
-        col = torch.nn.ModuleList([T.ColorJitter()])
         data = Pic_to_Pic_dataset(args.random_csv, transform)
         train_data, val_data, test_data = random_split(data, [0.8, 0.1, 0.1])
-        transform = T.Compose([T.ToTensor(),
-                                T.RandomVerticalFlip(),
-                                T.RandomHorizontalFlip(),
-                                T.RandomApply(col, p=0.3)])
-        train_data.transform = transform 
-        
 
     else:
         col = torch.nn.ModuleList([T.ColorJitter()])
-        if args.transform:
-            transform = T.Compose([T.ToTensor(),
-                                T.RandomVerticalFlip(),
-                                T.RandomHorizontalFlip(),
-                                T.RandomApply(col, p=0.3)])
         train_data = Pic_to_Pic_dataset(args.train_csv, transform)
-        transform = T.ToTensor()
         val_data = Pic_to_Pic_dataset(args.val_csv, transform)
         test_data = Pic_to_Pic_dataset(args.test_csv, transform)
+    if args.transform: 
+        col = torch.nn.ModuleList([T.ColorJitter()])
+        transform = T.Compose([T.ToTensor(),
+                                    T.RandomVerticalFlip(),
+                                    T.RandomHorizontalFlip(),
+                                    T.RandomApply(col, p=0.3)])
+        train_data.transform = transform 
+ 
     loaders = {'train': DataLoader(train_data, args.batch_size),
                'val': DataLoader(val_data, args.batch_size),
                'test': DataLoader(test_data, args.batch_size)} 
