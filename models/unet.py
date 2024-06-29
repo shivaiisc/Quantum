@@ -135,6 +135,39 @@ class UNET(nn.Module):
 
         return self.out(x)
 
+class H_UNET(nn.Module):
+    def __init__(self, in_ch=1, out_ch=1, bilinear=True):
+        super().__init__() 
+        self.ch = DoubleConv(in_ch, 64)
+        self.down1 = DownBlock(64, 128)
+        self.down2 = DownBlock(128, 256)
+        self.down3 = DownBlock(256, 512*2)
+        factor = 2 if bilinear else 1
+        self.down4 = DownBlock(512*2, 2*1024//factor)
+
+        self.up1 = UpBlock(1024*2, 2*512//factor, bilinear)
+        self.up2 = UpBlock(512+256, 256//factor, bilinear)
+        self.up3 = UpBlock(256, 128//factor, bilinear)
+        self.up4 = UpBlock(128, 64, bilinear)
+        self.out = nn.Sequential(nn.Conv2d(64, out_ch, kernel_size=1, stride=1),
+                                 nn.Sigmoid())
+
+    def forward(self, x):
+        x0 = self.ch(x)
+        x1 = self.down1(x0)
+        x2 = self.down2(x1)
+        x3 = self.down3(x2)
+        x = self.down4(x3)
+        print(f'{x.shape = }')
+
+        x = self.up1(x, x3)
+        x = self.up2(x, x2)
+        x = self.up3(x, x1)
+        x = self.up4(x, x0)
+
+        return self.out(x)
+
+
 class Q_UNET(nn.Module):
     def __init__(self, in_ch=1, out_ch=1, n_qubits=16, bilinear=True):
         super().__init__() 
@@ -180,10 +213,10 @@ class Small_UNET(nn.Module):
         super().__init__() 
         self.ch = DoubleConv(in_ch, 64)
         self.down1 = DownBlock(64, 128)
-        self.down2 = DownBlock(128, 128)
+        self.down2 = DownBlock(128, 256)
         factor = 2 if bilinear else 1
 
-        self.up3 = UpBlock(256, 128//factor, bilinear)
+        self.up3 = UpBlock(256+128, 128//factor, bilinear)
         self.up4 = UpBlock(128, 64, bilinear)
         self.out = nn.Sequential(nn.Conv2d(64, out_ch, kernel_size=1, stride=1),
                                  nn.Sigmoid())
@@ -267,11 +300,11 @@ if __name__ == '__main__':
     img = ToTensor()(img).cuda()
     # img = torch.randn(1, 1, 100, 100).float().cuda()
     # model = UNET(in_ch=2, out_ch=1).cuda() 
-    model = RCNN_UNET(in_ch=1, out_ch=1).cuda() 
+    model = H_UNET(in_ch=1, out_ch=1).cuda() 
+    # model = Small_UNET(in_ch=1, out_ch=1).cuda() 
     model.train()
     
-    img = img.cuda()
-    logits = model(img.cuda())
+    logits = model(img.unsqueeze(0))
 
     print(logits.shape)
 
