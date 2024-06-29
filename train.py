@@ -53,8 +53,8 @@ def loop(model, loader, optimizer, criterion, args, mode='train'):
                     'bce_loss': round(bce_loss.item(), 4),
                     'total_loss': round(loss.item(), 4),
                     'mode': mode,
-                    'missed': model.module.missed if args.parallel\
-                    else model.missed,
+                    # 'missed': model.module.missed if args.parallel\
+                    # else model.missed,
                     'es': f'{args.early_stopping_idx}/{args.early_stop}'}
         ssim_loss_list.append(log_dict['ssim_loss'])
         dice_loss_list.append(log_dict['dice_loss'])

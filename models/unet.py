@@ -158,7 +158,6 @@ class H_UNET(nn.Module):
         x2 = self.down2(x1)
         x3 = self.down3(x2)
         x = self.down4(x3)
-        print(f'{x.shape = }')
 
         x = self.up1(x, x3)
         x = self.up2(x, x2)

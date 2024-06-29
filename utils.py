@@ -25,6 +25,9 @@ def get_model(args):
     elif args.model_name == 'q_unet': 
         from models import Q_UNET 
         model = Q_UNET(in_ch=args.in_ch, out_ch=args.out_ch, n_qubits=args.n_qubits).to(args.device)
+    elif args.model_name == 'h_unet': 
+        from models import H_UNET 
+        model = H_UNET(in_ch=args.in_ch, out_ch=args.out_ch).to(args.device)
     else:
         print('model Unavailable')
         exit()
