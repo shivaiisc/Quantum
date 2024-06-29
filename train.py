@@ -146,7 +146,7 @@ def main(args):
         transform = T.Compose([T.ToTensor(),
                                     T.RandomVerticalFlip(),
                                     T.RandomHorizontalFlip(),
-                                    T.RandomApply(col, p=0.3)])
+                                    T.RandomApply(col, p=0.)])
         train_data.transform = transform 
  
     loaders = {'train': DataLoader(train_data, args.batch_size),
