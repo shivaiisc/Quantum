@@ -7,7 +7,7 @@ from dataset import Pic_to_Pic_dataset
 from loss import SSIM_DICE_BCE, calc_metrics 
 from utils import save_model, load_model, plot, get_model
 from torch.utils.data import DataLoader, random_split
-from torch.optim import Adam 
+from torch.optim import SGD, Adam 
 from torchvision.utils import make_grid 
 from torchvision import transforms as T
 from tqdm import tqdm 
@@ -183,7 +183,9 @@ def main(args):
         os.mkdir(args.plot_path)
     config_txt_path = f'{logs_path}/config.txt'
     
-    optimizer = Adam(params = filter(lambda p: p.requires_grad, model.parameters()),
+    # optimizer = Adam(params = filter(lambda p: p.requires_grad, model.parameters()),
+    #                  lr=args.lr)
+    optimizer = SGD(params = filter(lambda p: p.requires_grad, model.parameters()),
                      lr=args.lr)
     criterion = SSIM_DICE_BCE() 
     
