@@ -234,6 +234,7 @@ class RCNN_UNET(nn.Module):
     def __init__(self, in_ch=1, out_ch=1, threshold = 0.7): 
         super().__init__()
         self.unet = UNET(in_ch, out_ch) 
+        self.s_unet = Small_UNET(in_ch, out_ch) 
         self.missed = 0
         f = open('./faster_rcnn/config/voc.yaml', 'r')
         config = yaml.safe_load(f)
@@ -285,7 +286,7 @@ class RCNN_UNET(nn.Module):
         res = torch.zeros_like(x)
         x1, y1, x2, y2 = self.corn_to_centre(boxes[0])
         x = crop(x, x1, y1, x2-x1, y2-y1).detach()
-        res[:, :, x1:x2, y1:y2] = self.unet(x)
+        res[:, :, x1:x2, y1:y2] = self.s_unet(x)
         return res
  
 
