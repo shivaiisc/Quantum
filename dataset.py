@@ -25,6 +25,29 @@ class Pic_to_Pic_dataset(Dataset):
         return img, mask
 
 
+class Crop_dataset(Dataset): 
+    def __init__(self, data_csv, transform): 
+        super().__init__() 
+        self.df = pd.read_csv(data_csv).sort_values('patient_id')[:30000]
+        print(self.df.columns)
+        print(f'{list(self.df.iloc[0]) = }')
+        exit()
+        self.df =  self.df.reset_index()
+        self.transform = transform
+
+    def __len__(self): 
+        return len(self.df)
+
+    def __getitem__(self, index): 
+        img_path = '/home/shivac/qml-data/'+self.df.img_path[index]
+        mask_path = '/home/shivac/qml-data/'+self.df.mask_path[index] 
+        img = Image.open(img_path).convert('L') 
+        mask = Image.open(mask_path)
+        img = self.transform(img)
+        mask = self.transform(mask)
+        return img, mask
+
+
 
 class Cond_Pic_to_Pic_dataset(Dataset): 
     def __init__(self, data_csv): 
@@ -53,7 +76,7 @@ if __name__ == '__main__':
     import torchvision.transforms as T 
     transform = T.Compose([T.ToTensor(), T.RandomHorizontalFlip(),
                            T.RandomVerticalFlip()])
-    dataset = Pic_to_Pic_dataset('/home/shivac/qml-data/csv_files/org_99.csv',
+    dataset = Crop_dataset('/home/shivac/qml-data/csv_files/crop_org_99.csv',
                                  transform=transform) 
     from torch.utils.data import DataLoader 
     loader = DataLoader(dataset, batch_size=2) 
