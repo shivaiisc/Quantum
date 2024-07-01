@@ -37,6 +37,7 @@ class Crop_dataset(Dataset):
         return len(self.df)
 
     def __getitem__(self, index): 
+        index = 1000
         img_path = '/home/shivac/qml-data/'+self.df.img_path[index]
         mask_path = '/home/shivac/qml-data/'+self.df.mask_path[index] 
         xc = self.df.xc[index]
