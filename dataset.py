@@ -1,3 +1,4 @@
+from logging import shutdown
 import torch
 from torch.utils.data import Dataset 
 from PIL import Image 
@@ -70,7 +71,7 @@ class Cond_Pic_to_Pic_dataset(Dataset):
         return len(self.df)
 
     def __getitem__(self, index): 
-        index = 100
+        print(f'{index}')
         img_path = '/home/shivac/qml-data/'+self.df.img_path[index]
         mask_path = '/home/shivac/qml-data/'+self.df.mask_path[index] 
         img_path = img_path.split('/')
@@ -93,7 +94,7 @@ if __name__ == '__main__':
     dataset = Crop_dataset('/home/shivac/qml-data/csv_files/crop_train_80.csv',
                                  transform=transform) 
     from torch.utils.data import DataLoader 
-    loader = DataLoader(dataset, batch_size=2) 
+    loader = DataLoader(dataset, batch_size=2, shuffle=True) 
     img, mask= next(iter(loader)) 
     print(img.shape, mask.shape)
     ToPILImage()(img[0]).save('./samples/im.png')
