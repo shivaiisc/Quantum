@@ -38,7 +38,7 @@ class Crop_dataset(Dataset):
         return len(self.df)
 
     def __getitem__(self, index): 
-        index = 1000
+        print(f'{index}')
         img_path = '/home/shivac/qml-data/'+self.df.img_path[index]
         mask_path = '/home/shivac/qml-data/'+self.df.mask_path[index] 
         xc = self.df.xc[index]
@@ -47,10 +47,6 @@ class Crop_dataset(Dataset):
         xmax = xc + 50 
         ymin = yc - 50 
         ymax = yc + 50 
-        print(f'{index = }')
-        print(f'{xmin, ymin, xmax, ymax = }')
-        width = xmax - xmin 
-        height = ymax - ymin
         img = Image.open(img_path).convert('L') 
         mask = Image.open(mask_path)
         img = self.transform(img)
@@ -71,7 +67,6 @@ class Cond_Pic_to_Pic_dataset(Dataset):
         return len(self.df)
 
     def __getitem__(self, index): 
-        print(f'{index}')
         img_path = '/home/shivac/qml-data/'+self.df.img_path[index]
         mask_path = '/home/shivac/qml-data/'+self.df.mask_path[index] 
         img_path = img_path.split('/')
