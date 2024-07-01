@@ -315,7 +315,6 @@ class RCNN_UNET(nn.Module):
 
     
     def forward(self, x): 
-        print(x.shape)
         with torch.no_grad():
             _, frcnn_output = self.faster_rcnn(x, None)
             boxes = torch.tensor([])
@@ -323,13 +322,11 @@ class RCNN_UNET(nn.Module):
                 boxes = frcnn_output['boxes'] 
         if boxes.shape != (1, 4): 
             self.missed += 1
-            print(x.shape)
             res = self.unet(x) 
             return res 
         res = torch.zeros_like(x)
         x1, y1, x2, y2 = self.corn_to_centre(boxes[0])
         x = x[:, :, x1:x2, y1:y2]
-        print(x.shape)
         res[:, :, x1:x2, y1:y2] = self.s_unet(x)
 
         return res

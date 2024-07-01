@@ -133,8 +133,8 @@ def train(model, loaders, optimizer, criterion, args):
 def main(args):
     transform = T.ToTensor()
     if args.random_split:
-        # data = Pic_to_Pic_dataset(args.random_csv, transform)
-        data = Crop_dataset(args.random_csv, transform)
+        data = Pic_to_Pic_dataset(args.random_csv, transform)
+        # data = Crop_dataset(args.random_csv, transform)
         train_data, val_data, test_data = random_split(data, [0.8, 0.1, 0.1])
     else:
         col = torch.nn.ModuleList([T.ColorJitter()])
