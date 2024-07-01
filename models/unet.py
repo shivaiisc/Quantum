@@ -285,8 +285,9 @@ class RCNN_UNET(nn.Module):
             return res 
         res = torch.zeros_like(x)
         x1, y1, x2, y2 = self.corn_to_centre(boxes[0])
-        x = crop(x, x1, y1, x2-x1, y2-y1).detach()
+        x = x[:, :, x1:x2, y1:y2]
         res[:, :, x1:x2, y1:y2] = self.s_unet(x)
+
         return res
  
 
@@ -300,7 +301,7 @@ if __name__ == '__main__':
     img = ToTensor()(img).cuda()
     # img = torch.randn(1, 1, 100, 100).float().cuda()
     # model = UNET(in_ch=2, out_ch=1).cuda() 
-    model = H_UNET(in_ch=1, out_ch=1).cuda() 
+    model = RCNN_UNET(in_ch=1, out_ch=1).cuda() 
     # model = Small_UNET(in_ch=1, out_ch=1).cuda() 
     model.train()
     
