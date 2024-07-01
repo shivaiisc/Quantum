@@ -3,7 +3,8 @@ from torch.utils.data import Dataset
 from PIL import Image 
 from torchvision.transforms import ToTensor, transforms
 import os 
-import pandas as pd 
+import pandas as pd
+from torchvision.transforms.functional import crop 
 
 class Pic_to_Pic_dataset(Dataset): 
     def __init__(self, data_csv, transform): 
@@ -29,9 +30,6 @@ class Crop_dataset(Dataset):
     def __init__(self, data_csv, transform): 
         super().__init__() 
         self.df = pd.read_csv(data_csv).sort_values('patient_id')[:30000]
-        print(self.df.columns)
-        print(f'{list(self.df.iloc[0]) = }')
-        exit()
         self.df =  self.df.reset_index()
         self.transform = transform
 
@@ -41,10 +39,20 @@ class Crop_dataset(Dataset):
     def __getitem__(self, index): 
         img_path = '/home/shivac/qml-data/'+self.df.img_path[index]
         mask_path = '/home/shivac/qml-data/'+self.df.mask_path[index] 
+        xmin = self.df.xmin[index]
+        ymin = self.df.ymin[index]
+        xmax = self.df.xmax[index] 
+        ymax = self.df.ymax[index] 
+        print(f'{index = }')
+        print(f'{xmin, ymin, xmax, ymax = }')
+        width = xmax - xmin 
+        height = ymax - ymin
         img = Image.open(img_path).convert('L') 
         mask = Image.open(mask_path)
         img = self.transform(img)
         mask = self.transform(mask)
+        img = crop(img, xmin, ymin, height, width)
+        mask = crop(mask, xmin, ymin, height, width)
         return img, mask
 
 
@@ -76,7 +84,7 @@ if __name__ == '__main__':
     import torchvision.transforms as T 
     transform = T.Compose([T.ToTensor(), T.RandomHorizontalFlip(),
                            T.RandomVerticalFlip()])
-    dataset = Crop_dataset('/home/shivac/qml-data/csv_files/crop_org_99.csv',
+    dataset = Crop_dataset('/home/shivac/qml-data/csv_files/crop_train_80.csv',
                                  transform=transform) 
     from torch.utils.data import DataLoader 
     loader = DataLoader(dataset, batch_size=2) 
