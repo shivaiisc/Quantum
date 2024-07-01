@@ -8,7 +8,6 @@ from einops import rearrange
 from torch.nn import functional as F
 from torch import bilinear, nn, threshold 
 import pennylane as qml 
-from faster_rcnn.model.faster_rcnn import FasterRCNN
 
 
 class Quanv(nn.Module):
@@ -216,7 +215,6 @@ class Small_UNET(nn.Module):
         factor = 2 if bilinear else 1
 
         self.up3 = UpBlock(256+128, 128//factor, bilinear)
-        self.up4 = UpBlock(128, 64, bilinear)
         self.out = nn.Sequential(nn.Conv2d(64, out_ch, kernel_size=1, stride=1),
                                  nn.Sigmoid())
 
@@ -230,8 +228,50 @@ class Small_UNET(nn.Module):
 
         return self.out(x)
 
+class Small_Q_UNET(nn.Module):
+    def __init__(self, in_ch=1, out_ch=1, n_qubits=16, bilinear=True):
+        super().__init__() 
+        self.n_qubits = n_qubits
+        self.ch = DoubleConv(in_ch, 64)
+        self.down1 = DownBlock(64, 128)
+        self.down2 = DownBlock(128, 256)
+        self.down3 = DownBlock(256, 512)
+        
+        self.qml_encoder = nn.Conv2d(512, 1, 1, 1)
+        self.qml_lay = Quanv(n_qubits, n_qubits)
+        self.qml_decoder = nn.Conv2d(1, 512, 1, 1)
+        factor = 2 if bilinear else 1
+
+        self.up1 = UpBlock(1024, 512//factor, bilinear)
+        self.up2 = UpBlock(512, 256//factor, bilinear)
+        self.up3 = UpBlock(256, 128//factor, bilinear)
+        self.up4 = UpBlock(128, 64, bilinear)
+        self.out = nn.Sequential(nn.Conv2d(64, out_ch, kernel_size=1, stride=1),
+                                 nn.Sigmoid())
+
+    def forward(self, x):
+        x0 = self.ch(x)
+        x1 = self.down1(x0)
+        x2 = self.down2(x1)
+        x = self.down3(x2)
+        print(f'{x.shape = }')
+        exit()
+        x = self.qml_encoder(x)
+        bs, c, h, w = x.shape
+        x = x.reshape(bs, -1, self.n_qubits)
+        x = x.reshape(bs, c, h, w)
+        x = self.qml_decoder(x)
+
+        x = self.up2(x, x2)
+        x = self.up3(x, x1)
+        x = self.up4(x, x0)
+
+        return self.out(x)
+
+
 class RCNN_UNET(nn.Module): 
     def __init__(self, in_ch=1, out_ch=1, threshold = 0.7): 
+        from faster_rcnn.model.faster_rcnn import FasterRCNN
         super().__init__()
         self.unet = UNET(in_ch, out_ch) 
         self.s_unet = Small_UNET(in_ch, out_ch) 
@@ -296,12 +336,12 @@ class RCNN_UNET(nn.Module):
 
 if __name__ == '__main__': 
     torch.manual_seed(0)
-    img = torch.randn(1, 1, 448, 320).float().cuda()
-    img = Image.open('/home/shivac/qml-data/MEDVID0001_M_20210908_130347_0001_IMAGES/0/img.png').convert('L')
-    img = ToTensor()(img).cuda()
+    img = torch.randn(1, 1, 100, 100).float().cuda()
+    # img = Image.open('/home/shivac/qml-data/MEDVID0001_M_20210908_130347_0001_IMAGES/0/img.png').convert('L')
+    # img = ToTensor()(img).cuda()
     # img = torch.randn(1, 1, 100, 100).float().cuda()
     # model = UNET(in_ch=2, out_ch=1).cuda() 
-    model = RCNN_UNET(in_ch=1, out_ch=1).cuda() 
+    model = Small_Q_UNET(in_ch=1, out_ch=1).cuda() 
     # model = Small_UNET(in_ch=1, out_ch=1).cuda() 
     model.train()
     
