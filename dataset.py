@@ -89,6 +89,7 @@ if __name__ == '__main__':
     import torchvision.transforms as T 
     transform = T.Compose([T.ToTensor(), T.RandomHorizontalFlip(),
                            T.RandomVerticalFlip()])
+    transform = T.ToTensor()
     dataset = Crop_dataset('/home/shivac/qml-data/csv_files/crop_train_80.csv',
                                  transform=transform) 
     from torch.utils.data import DataLoader 
