@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data import Dataset 
 from PIL import Image 
-from torchvision.transforms import ToTensor, transforms
+from torchvision.transforms import ToPILImage, ToTensor, transforms
 import os 
 import pandas as pd
 from torchvision.transforms.functional import crop 
@@ -39,10 +39,12 @@ class Crop_dataset(Dataset):
     def __getitem__(self, index): 
         img_path = '/home/shivac/qml-data/'+self.df.img_path[index]
         mask_path = '/home/shivac/qml-data/'+self.df.mask_path[index] 
-        xmin = self.df.xmin[index]
-        ymin = self.df.ymin[index]
-        xmax = self.df.xmax[index] 
-        ymax = self.df.ymax[index] 
+        xc = self.df.xc[index]
+        yc = self.df.yc[index]
+        xmin = xc - 50 
+        xmax = xc + 50 
+        ymin = yc - 50 
+        ymax = yc + 50 
         print(f'{index = }')
         print(f'{xmin, ymin, xmax, ymax = }')
         width = xmax - xmin 
@@ -90,5 +92,7 @@ if __name__ == '__main__':
     loader = DataLoader(dataset, batch_size=2) 
     img, mask= next(iter(loader)) 
     print(img.shape, mask.shape)
+    ToPILImage()(img[0]).save('./samples/im.png')
+    ToPILImage()(mask[0]).save('./samples/ma.png')
     
 
