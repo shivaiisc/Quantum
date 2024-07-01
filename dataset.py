@@ -42,10 +42,10 @@ class Crop_dataset(Dataset):
         mask_path = '/home/shivac/qml-data/'+self.df.mask_path[index] 
         xc = self.df.xc[index]
         yc = self.df.yc[index]
-        xmin = xc - 100 
-        xmax = xc + 100 
-        ymin = yc - 100 
-        ymax = yc + 100 
+        xmin = xc - 50 
+        xmax = xc + 50 
+        ymin = yc - 50 
+        ymax = yc + 50 
         print(f'{index = }')
         print(f'{xmin, ymin, xmax, ymax = }')
         width = xmax - xmin 
