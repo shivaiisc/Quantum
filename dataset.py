@@ -53,7 +53,7 @@ class Crop_dataset(Dataset):
         mask = Image.open(mask_path)
         img = self.transform(img)
         mask = self.transform(mask)
-        mask.save('./samples/mask.png')
+        ToPILImage()(mask).save('./samples/mask.png')
         img = crop(img, xmin, ymin, height, width)
         mask = crop(mask, xmin, ymin, height, width)
         return img, mask
