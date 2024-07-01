@@ -70,6 +70,7 @@ class Cond_Pic_to_Pic_dataset(Dataset):
         return len(self.df)
 
     def __getitem__(self, index): 
+        index = 100
         img_path = '/home/shivac/qml-data/'+self.df.img_path[index]
         mask_path = '/home/shivac/qml-data/'+self.df.mask_path[index] 
         img_path = img_path.split('/')
