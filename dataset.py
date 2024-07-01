@@ -76,6 +76,7 @@ class Cond_Pic_to_Pic_dataset(Dataset):
         idx = int(self.df.idx[index])
         img = Image.open(img_path).convert('L') 
         mask = Image.open(mask_path)
+        mask.save('./samples/mask.png')
         img = ToTensor()(img)
         mask = ToTensor()(mask)
         return img, mask, torch.as_tensor(idx)
