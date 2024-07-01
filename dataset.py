@@ -95,6 +95,6 @@ if __name__ == '__main__':
     img, mask= next(iter(loader)) 
     print(img.shape, mask.shape)
     ToPILImage()(img[0]).save('./samples/im.png')
-    ToPILImage()(mask[0]).save('./samples/ma.png')
+    ToPILImage()(mask[0]).save('./samples/crop_mask.png')
     
 
