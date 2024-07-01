@@ -3,7 +3,7 @@ from curtsies.fmtfuncs import green, red, blue
 import pickle
 import torch 
 import numpy as np
-from dataset import Pic_to_Pic_dataset
+from dataset import Pic_to_Pic_dataset, Crop_dataset
 from loss import SSIM_DICE_BCE, calc_metrics 
 from utils import save_model, load_model, plot, get_model
 from torch.utils.data import DataLoader, random_split
@@ -133,14 +133,15 @@ def train(model, loaders, optimizer, criterion, args):
 def main(args):
     transform = T.ToTensor()
     if args.random_split:
-        data = Pic_to_Pic_dataset(args.random_csv, transform)
+        # data = Pic_to_Pic_dataset(args.random_csv, transform)
+        data = Crop_dataset(args.random_csv, transform)
         train_data, val_data, test_data = random_split(data, [0.8, 0.1, 0.1])
-
     else:
         col = torch.nn.ModuleList([T.ColorJitter()])
         train_data = Pic_to_Pic_dataset(args.train_csv, transform)
         val_data = Pic_to_Pic_dataset(args.val_csv, transform)
         test_data = Pic_to_Pic_dataset(args.test_csv, transform)
+
     if args.transform: 
         col = torch.nn.ModuleList([T.ColorJitter()])
         transform = T.Compose([T.ToTensor(),
@@ -183,10 +184,10 @@ def main(args):
         os.mkdir(args.plot_path)
     config_txt_path = f'{logs_path}/config.txt'
     
-    # optimizer = Adam(params = filter(lambda p: p.requires_grad, model.parameters()),
-    #                  lr=args.lr)
-    optimizer = SGD(params = filter(lambda p: p.requires_grad, model.parameters()),
+    optimizer = Adam(params = filter(lambda p: p.requires_grad, model.parameters()),
                      lr=args.lr)
+    # optimizer = SGD(params = filter(lambda p: p.requires_grad, model.parameters()),
+    #                  lr=args.lr)
     criterion = SSIM_DICE_BCE() 
     
     row = ['train_ssim_loss', 'train_dice_loss', \
@@ -209,7 +210,7 @@ if __name__ == '__main__':
     import argparse 
     parser = argparse.ArgumentParser() 
     parser.add_argument('-ep', '--epochs', type=int, default=50)
-    parser.add_argument('-rs', '--random_split', type=int, default=0)
+    parser.add_argument('-rs', '--random_split', type=int, default=1)
     parser.add_argument('-t', '--transform', type=int, default=0)
     parser.add_argument('-n', '--noise', type=float, default=0.0)
     parser.add_argument('-exp', '--experiment', type=str, default='quantum_noise')
@@ -217,7 +218,7 @@ if __name__ == '__main__':
     parser.add_argument('-bs', '--batch_size', type=int, default=16)
     parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('-es', '--early_stop', type=int, default=6) 
-    parser.add_argument('-rc', '--random_csv', type=str, default='../../qml-data/csv_files/whole_298.csv') 
+    parser.add_argument('-rc', '--random_csv', type=str, default='../../qml-data/csv_files/crop_org_99.csv') 
     parser.add_argument('-trc', '--train_csv', type=str, default='../../qml-data/csv_files/org_train_75.csv') 
     parser.add_argument('-vc', '--val_csv', type=str, default='../../qml-data/csv_files/org_val_10.csv') 
     parser.add_argument('-tc', '--test_csv', type=str, default='../../qml-data/csv_files/org_test_20.csv') 
