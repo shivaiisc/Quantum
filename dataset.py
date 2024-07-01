@@ -53,6 +53,7 @@ class Crop_dataset(Dataset):
         mask = Image.open(mask_path)
         img = self.transform(img)
         mask = self.transform(mask)
+        mask.save('./samples/mask.png')
         img = crop(img, xmin, ymin, height, width)
         mask = crop(mask, xmin, ymin, height, width)
         return img, mask
@@ -76,7 +77,6 @@ class Cond_Pic_to_Pic_dataset(Dataset):
         idx = int(self.df.idx[index])
         img = Image.open(img_path).convert('L') 
         mask = Image.open(mask_path)
-        mask.save('./samples/mask.png')
         img = ToTensor()(img)
         mask = ToTensor()(mask)
         return img, mask, torch.as_tensor(idx)
