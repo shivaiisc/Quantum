@@ -268,7 +268,7 @@ class Small_Q_UNET(nn.Module):
 
 
 class RCNN_UNET(nn.Module): 
-    def __init__(self, in_ch=1, out_ch=1, threshold = 0.7, quantum=True): 
+    def __init__(self, in_ch=1, out_ch=1, threshold = 0.7, quantum=False): 
         from faster_rcnn.model.faster_rcnn import FasterRCNN
         super().__init__()
         self.unet = UNET(in_ch, out_ch) 

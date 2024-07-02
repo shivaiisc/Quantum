@@ -70,6 +70,43 @@ class SSIM(nn.Module):
         ssim_map = ((2*mu1_mu2+c0)*(2*sigma_12+c1))/((mu1_sq+mu2_sq+c0)*(sigma1_sq+sigma2_sq+c1))
         return 1-ssim_map.mean()
 
+def softmax_helper(x):
+    # copy from: https://github.com/MIC-DKFZ/nnUNet/blob/master/nnunet/utilities/nd_softmax.py
+    rpt = [1 for _ in range(len(x.size()))]
+    rpt[1] = x.size(1)
+    x_max = x.max(1, keepdim=True)[0].repeat(*rpt)
+    e_x = torch.exp(x - x_max)
+    return e_x / e_x.sum(1, keepdim=True).repeat(*rpt)
+
+
+
+class BDLoss(nn.Module):
+    def __init__(self):
+        """
+        compute boudary loss
+        only compute the loss of foreground
+        ref: https://github.com/LIVIAETS/surface-loss/blob/108bd9892adca476e6cdf424124bc6268707498e/losses.py#L74
+        """
+        super(BDLoss, self).__init__()
+        # self.do_bg = do_bg
+
+    def forward(self, net_output, bound):
+        """
+        net_output: (batch_size, class, x,y,z)
+        target: ground truth, shape: (batch_size, 1, x,y,z)
+        bound: precomputed distance map, shape (batch_size, class, x,y,z)
+        """
+        net_output = softmax_helper(net_output)
+        # print('net_output shape: ', net_output.shape)
+        pc = net_output[:, :, ...].type(torch.float32)
+        dc = bound[:,:, ...].type(torch.float32)
+
+        multipled = torch.einsum("bcxy,bcxy->bcxy", pc, dc)
+        bd_loss = multipled.mean()
+        return bd_loss
+
+
+
 
 class SSIM_DICE_BCE(nn.Module):
 
@@ -78,9 +115,11 @@ class SSIM_DICE_BCE(nn.Module):
         self.ssim = SSIM() 
         self.dice= DiceLoss() 
         self.bce = nn.BCELoss()
+        self.bd_loss = BDLoss()
 
     def forward(self, logits, targets):
-        ssim_loss = self.ssim(logits, targets.to(torch.float32)) 
+        ssim_loss = self.ssim(logits, targets.to(torch.float32)) +\
+            self.bd_loss(logits, targets)
         bce_loss = self.bce(logits, targets.to(torch.float32))
         dice_loss= self.dice(logits, targets) 
         return {'ssim_loss': ssim_loss, 'bce_loss': bce_loss, 'dice_loss': dice_loss}
@@ -127,11 +166,11 @@ if __name__ == '__main__':
     config = parser.parse_args()
 
     model = UNET().cuda()
-    model.load_state_dict(torch.load('./ckpts/unet.pth'))
-    criterion = SSIM_DICE_BCE()
+    # model.load_state_dict(torch.load('./ckpts/unet.pth'))
+    criterion = BDLoss()
 
-    img = Image.open('./data/0/img_111.jpg').convert('L') 
-    mask = Image.open('./data/0/mask_111.tif').convert('L') 
+    mask = Image.open('//home/shivac/qml-data/MEDVID0001_M_20210908_130347_0001_IMAGES/0/mask.png').convert('L') 
+    img = Image.open('//home/shivac/qml-data/MEDVID0001_M_20210908_130347_0001_IMAGES/0/img.png').convert('L') 
     img = ToTensor()(img).cuda().unsqueeze(0)
     mask = ToTensor()(mask).cuda().unsqueeze(0)
 
