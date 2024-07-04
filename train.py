@@ -184,10 +184,10 @@ def main(args):
         os.mkdir(args.plot_path)
     config_txt_path = f'{logs_path}/config.txt'
     
-    # optimizer = Adam(params = filter(lambda p: p.requires_grad, model.parameters()),
-    #                  lr=args.lr)
-    optimizer = SGD(params = filter(lambda p: p.requires_grad, model.parameters()),
+    optimizer = Adam(params = filter(lambda p: p.requires_grad, model.parameters()),
                      lr=args.lr)
+    # optimizer = SGD(params = filter(lambda p: p.requires_grad, model.parameters()),
+    #                  lr=args.lr)
     criterion = SSIM_DICE_BCE() 
     
     row = ['train_ssim_loss', 'train_dice_loss', \
