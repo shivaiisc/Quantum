@@ -65,11 +65,14 @@ class DoubleConv(nn.Module):
         mid_ch = out_ch if not mid_ch else mid_ch
         self.net = nn.Sequential(nn.Conv2d(in_ch, mid_ch, kernel_size=3, padding=1),
                                  nn.BatchNorm2d(mid_ch),
-                                 nn.ReLU(inplace=True),
+                                 # nn.ReLU(inplace=True),
+                                 nn.PReLU(num_parameters=mid_ch),
 
                                  nn.Conv2d(mid_ch, out_ch, kernel_size=3, padding=1),
                                  nn.BatchNorm2d(out_ch),
-                                 nn.ReLU(inplace=True))
+                                 nn.PReLU(num_parameters=out_ch))
+                                 # nn.ReLU(inplace=True))
+
 
     def forward(self, x):
         return self.net(x)
@@ -268,7 +271,7 @@ class Small_Q_UNET(nn.Module):
 
 
 class RCNN_UNET(nn.Module): 
-    def __init__(self, in_ch=1, out_ch=1, threshold = 0.7, quantum=False): 
+    def __init__(self, in_ch=1, out_ch=1, threshold = 0.7, quantum=True): 
         from faster_rcnn.model.faster_rcnn import FasterRCNN
         super().__init__()
         self.unet = UNET(in_ch, out_ch) 

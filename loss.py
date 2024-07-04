@@ -115,11 +115,9 @@ class SSIM_DICE_BCE(nn.Module):
         self.ssim = SSIM() 
         self.dice= DiceLoss() 
         self.bce = nn.BCELoss()
-        self.bd_loss = BDLoss()
 
     def forward(self, logits, targets):
-        ssim_loss = self.ssim(logits, targets.to(torch.float32)) +\
-            self.bd_loss(logits, targets)
+        ssim_loss = self.ssim(logits, targets.to(torch.float32)) 
         bce_loss = self.bce(logits, targets.to(torch.float32))
         dice_loss= self.dice(logits, targets) 
         return {'ssim_loss': ssim_loss, 'bce_loss': bce_loss, 'dice_loss': dice_loss}
