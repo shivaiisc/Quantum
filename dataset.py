@@ -16,9 +16,11 @@ class Pic_to_Pic_dataset(Dataset):
         if mode == 'train':  
             self.transform = v2.Compose([v2.RandomHorizontalFlip(),
                                          v2.RandomVerticalFlip(),
-                                         v2.ToTensor()])
+                                         v2.ToImage(),
+                                         v2.ToDtype(torch.float32),])
         else:
-            self.transform = v2.ToTensor()
+            self.transform = v2.Compose([v2.ToImage(),
+                                            v2.ToDtype(torch.float32),])
 
     def __len__(self): 
         return len(self.df)
