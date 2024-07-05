@@ -142,11 +142,10 @@ def main(args):
         test_data = Pic_to_Pic_dataset(args.test_csv, transform)
 
     if args.transform: 
-        col = torch.nn.ModuleList([T.ColorJitter()])
         transform = T.Compose([T.ToTensor(),
                                     T.RandomVerticalFlip(),
                                     T.RandomHorizontalFlip(),
-                                    T.RandomApply(col, p=0.)])
+                                    ])
         train_data.transform = transform 
  
     loaders = {'train': DataLoader(train_data, args.batch_size, shuffle=True),
