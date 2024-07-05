@@ -217,7 +217,7 @@ if __name__ == '__main__':
     parser.add_argument('-bs', '--batch_size', type=int, default=16)
     parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('-es', '--early_stop', type=int, default=6) 
-    parser.add_argument('-rc', '--random_csv', type=str, default='../../qml-data/csv_files/whole_99_org.csv') 
+    parser.add_argument('-rc', '--random_csv', type=str, default='../../qml-data/csv_files/train_75_org.csv') 
     parser.add_argument('-trc', '--train_csv', type=str, default='../../qml-data/csv_files/train_75_org.csv') 
     parser.add_argument('-vc', '--val_csv', type=str, default='../../qml-data/csv_files/val_10_org.csv') 
     parser.add_argument('-tc', '--test_csv', type=str, default='../../qml-data/csv_files/test_14_org.csv') 
