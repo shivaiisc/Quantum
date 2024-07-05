@@ -137,7 +137,6 @@ def main(args):
         # data = Crop_dataset(args.random_csv, transform)
         train_data, val_data, test_data = random_split(data, [0.8, 0.1, 0.1])
     else:
-        col = torch.nn.ModuleList([T.ColorJitter()])
         train_data = Pic_to_Pic_dataset(args.train_csv, transform)
         val_data = Pic_to_Pic_dataset(args.val_csv, transform)
         test_data = Pic_to_Pic_dataset(args.test_csv, transform)
@@ -150,7 +149,7 @@ def main(args):
                                     T.RandomApply(col, p=0.)])
         train_data.transform = transform 
  
-    loaders = {'train': DataLoader(train_data, args.batch_size),
+    loaders = {'train': DataLoader(train_data, args.batch_size, shuffle=True),
                'val': DataLoader(val_data, args.batch_size),
                'test': DataLoader(test_data, args.batch_size)} 
     print(f'{len(train_data) = }')
@@ -218,7 +217,7 @@ if __name__ == '__main__':
     parser.add_argument('-bs', '--batch_size', type=int, default=16)
     parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('-es', '--early_stop', type=int, default=6) 
-    parser.add_argument('-rc', '--random_csv', type=str, default='../../qml-data/csv_files/crop_org_99.csv') 
+    parser.add_argument('-rc', '--random_csv', type=str, default='../../qml-data/csv_files/whole_99_org.csv') 
     parser.add_argument('-trc', '--train_csv', type=str, default='../../qml-data/csv_files/train_75_org.csv') 
     parser.add_argument('-vc', '--val_csv', type=str, default='../../qml-data/csv_files/val_10_org.csv') 
     parser.add_argument('-tc', '--test_csv', type=str, default='../../qml-data/csv_files/test_14_org.csv') 
