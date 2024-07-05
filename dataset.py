@@ -3,6 +3,7 @@ import torch
 from torch.utils.data import Dataset 
 from PIL import Image 
 from torchvision.transforms import ToPILImage, ToTensor, transforms
+from torchvision.transforms import v2 
 import os 
 import pandas as pd
 from torchvision.transforms.functional import crop 
@@ -13,11 +14,11 @@ class Pic_to_Pic_dataset(Dataset):
         self.df = pd.read_csv(data_csv).sort_values('patient_id')[:30000]
         self.df =  self.df.reset_index()
         if mode == 'train':  
-            self.transform = transforms.Compose([transforms.RandomVerticalFlip(),
-                                                transforms.RandomHorizontalFlip(),
-                                                transforms.ToTensor()]) 
+            self.transform = v2.Compose([v2.RandomHorizontalFlip(),
+                                         v2.RandomVerticalFlip(),
+                                         v2.ToTensor()])
         else:
-            self.transform = transforms.ToTensor()
+            self.transform = v2.ToTensor()
 
     def __len__(self): 
         return len(self.df)
@@ -28,8 +29,7 @@ class Pic_to_Pic_dataset(Dataset):
         img = Image.open(img_path).convert('L') 
         # img = Image.open(img_path) 
         mask = Image.open(mask_path)
-        img = self.transform(img)
-        mask = self.transform(mask)
+        img, mask = self.transform(img, mask)
         return img, mask
 
 
