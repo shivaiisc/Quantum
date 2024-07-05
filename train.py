@@ -131,22 +131,17 @@ def train(model, loaders, optimizer, criterion, args):
 
 
 def main(args):
-    transform = T.ToTensor()
     if args.random_split:
-        data = Pic_to_Pic_dataset(args.random_csv, transform)
+        data = Pic_to_Pic_dataset(args.random_csv, mode='train')
         # data = Crop_dataset(args.random_csv, transform)
         train_data, val_data, test_data = random_split(data, [0.8, 0.1, 0.1])
+        val_data.transform = T.ToTensor() 
+        test_data.transform = T.ToTensor()
     else:
-        train_data = Pic_to_Pic_dataset(args.train_csv, transform)
-        val_data = Pic_to_Pic_dataset(args.val_csv, transform)
-        test_data = Pic_to_Pic_dataset(args.test_csv, transform)
+        train_data = Pic_to_Pic_dataset(args.train_csv, mode='train')
+        val_data = Pic_to_Pic_dataset(args.val_csv, mode='val')
+        test_data = Pic_to_Pic_dataset(args.test_csv, mode='test')
 
-    if args.transform: 
-        transform = T.Compose([T.ToTensor(),
-                                    T.RandomVerticalFlip(),
-                                    T.RandomHorizontalFlip(),
-                                    ])
-        train_data.transform = transform 
  
     loaders = {'train': DataLoader(train_data, args.batch_size, shuffle=True),
                'val': DataLoader(val_data, args.batch_size),

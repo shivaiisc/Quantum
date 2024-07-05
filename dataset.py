@@ -8,11 +8,16 @@ import pandas as pd
 from torchvision.transforms.functional import crop 
 
 class Pic_to_Pic_dataset(Dataset): 
-    def __init__(self, data_csv, transform): 
+    def __init__(self, data_csv, mode='train'): 
         super().__init__() 
         self.df = pd.read_csv(data_csv).sort_values('patient_id')[:30000]
         self.df =  self.df.reset_index()
-        self.transform = transform
+        if mode == 'train':  
+            self.transform = transforms.Compose([transforms.RandomVerticalFlip(),
+                                                transforms.RandomHorizontalFlip(),
+                                                transforms.ToTensor()]) 
+        else:
+            self.transform = transforms.ToTensor()
 
     def __len__(self): 
         return len(self.df)
