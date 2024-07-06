@@ -68,6 +68,7 @@ def infer(model, df):
         plt.close()
 
 
+torch.backends.cudnn.enabled = False
 
 def main(args): 
     df = pd.read_csv('/home/shivac/qml-data/csv_files/val_10_org.csv') 
@@ -80,12 +81,12 @@ def main(args):
     ckpt = torch.load('./ckpts/quantum_noise/56/best_unet.pth') 
     model.load_state_dict(ckpt['model_state'])
     model.eval()
-    print('=====infering on patient_id: {}=====>'.format(patient_id))
+    print('===== infering on patient_id: {} =====>'.format(patient_id))
     infer(model, df)
-    print('=====Converting images to video=====>')
+    print('===== Converting images to video =====>')
     imgs_to_vid('./plots/{}/'.format(patient_id))
-    print('=====Done=====>')
-    print('=====Video saved at ./plots/{}/vid.mp4=====>'.format(patient_id))
+    print('=====  Done=====>')
+    print('===== Video saved at ./plots/{}/vid.mp4 =====>'.format(patient_id))
 
         
 
