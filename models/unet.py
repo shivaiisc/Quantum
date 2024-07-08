@@ -136,9 +136,7 @@ class UNET(nn.Module):
         x = self.up4(x, x0)
 
         return self.out(x)
-    
 
-    
     def assign_names(self): 
         print('Assigning names to layers')
         self.ch.name = 'ch' 
