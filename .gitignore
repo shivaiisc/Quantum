@@ -5,4 +5,5 @@ g.sh
 *.tif
 del.txt
 del.py
+plots_imgs
 plots
