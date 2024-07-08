@@ -136,6 +136,21 @@ class UNET(nn.Module):
         x = self.up4(x, x0)
 
         return self.out(x)
+    
+
+    
+    def assign_names(self): 
+        print('Assigning names to layers')
+        self.ch.name = 'ch' 
+        self.down1.name = 'down1'
+        self.down2.name = 'down2'
+        self.down3.name = 'down3'
+        self.down4.name = 'down4'
+        self.up1.name = 'up1'
+        self.up2.name = 'up2'
+        self.up3.name = 'up3'
+        self.up4.name = 'up4'
+        self.out.name = 'out'        
 
 class H_UNET(nn.Module):
     def __init__(self, in_ch=1, out_ch=1, bilinear=True):
