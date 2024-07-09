@@ -32,7 +32,6 @@ class Pic_to_Pic_dataset(Dataset):
         # img = Image.open(img_path) 
         mask = Image.open(mask_path)
         img, mask = self.transform(img, mask)
-        img = 2 * img - 1 
         return img, mask
 
 

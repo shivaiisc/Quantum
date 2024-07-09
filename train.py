@@ -16,7 +16,7 @@ import os
 
 
 def loop(model, loader, optimizer, criterion, args, mode='train'): 
-    pbar = tqdm(enumerate(loader)) 
+    pbar = tqdm(enumerate(loader), total=len(loader)) 
     pbar.set_description(f'epochs:{args.curr_epoch}/{args.epochs}')
     ssim_loss_list = list() 
     dice_loss_list = list() 
