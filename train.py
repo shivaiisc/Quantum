@@ -131,21 +131,14 @@ def train(model, loaders, optimizer, criterion, args):
 
 
 def main(args):
-    if args.random_split:
-        data = Pic_to_Pic_dataset(args.random_csv, mode='train')
-        # data = Crop_dataset(args.random_csv, transform)
-        train_data, val_data, test_data = random_split(data, [0.8, 0.1, 0.1])
-        val_data.transform = T.ToTensor() 
-        test_data.transform = T.ToTensor()
-    else:
-        train_data = Pic_to_Pic_dataset(args.train_csv, mode='train')
-        val_data = Pic_to_Pic_dataset(args.val_csv, mode='val')
-        test_data = Pic_to_Pic_dataset(args.test_csv, mode='test')
+    train_data = Pic_to_Pic_dataset(args.random_csv, mode='train')
+    val_data = Pic_to_Pic_dataset(args.val_csv, mode='val')
+    test_data = Pic_to_Pic_dataset(args.test_csv, mode='test')
 
- 
     loaders = {'train': DataLoader(train_data, args.batch_size, shuffle=True),
                'val': DataLoader(val_data, args.batch_size),
                'test': DataLoader(test_data, args.batch_size)} 
+ 
     print(f'{len(train_data) = }')
     print(f'{len(val_data) = }')
     print(f'{len(test_data) = }')
@@ -204,7 +197,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser() 
     parser.add_argument('-ep', '--epochs', type=int, default=50)
     parser.add_argument('-rs', '--random_split', type=int, default=1)
-    parser.add_argument('-t', '--transform', type=int, default=0)
     parser.add_argument('-n', '--noise', type=float, default=0.0)
     parser.add_argument('-exp', '--experiment', type=str, default='quantum_noise')
     parser.add_argument('-m', '--model_name', type=str, default='unet')
