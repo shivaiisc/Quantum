@@ -58,6 +58,45 @@ class Quanv(nn.Module):
         x = self.fc3(x)
         return x
 
+class Q_Conv2d(nn.Module):
+    def __init__(self, in_channels: int, out_channels: int, kernel_size: int, stride: int, padding: int=0, num_layers: int=0, num_qubits: int=0):
+        super().__init__()
+        if num_qubits == 0:
+            num_qubits = kernel_size**2 * in_channels
+        if num_layers == 0:
+            num_layers = kernel_size**2
+        assert num_qubits == kernel_size**2 * in_channels, "The kernel size must be a square of the number of qubits"
+        dev = qml.device("default.qubit", wires=num_qubits)
+        self.kernel_size = kernel_size
+        self.stride = stride
+        self.padding = padding
+        self.num_qubits = num_qubits
+        self.num_layers = num_layers
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+
+        @qml.qnode(dev)
+        def qnode(inputs, weights):
+            qml.AngleEmbedding(inputs, wires=range(num_qubits))
+            qml.BasicEntanglerLayers(weights, wires=range(num_qubits))
+            return [qml.expval(qml.PauliZ(wires=list(range(num_qubits))[-1]))]
+
+        weight_shapes = {"weights": (num_layers, num_qubits)}
+
+        self.qlayer_list = nn.ModuleList([qml.qnn.TorchLayer(qnode, weight_shapes) for _ in range(self.out_channels)])
+
+    def forward(self, x):
+        assert len(x.shape) == 4, "The input tensor must be 4D"
+        assert x.shape[1] == self.in_channels, "The number of input channels must be equal to the in_channels"
+        res = list()
+        x = x.unfold(2, self.kernel_size, self.stride)
+        x = x.unfold(3, self.kernel_size, self.stride)
+        x = rearrange(x, 'b c h w i j -> b h w (c i j)')    
+        bs, h, w, _ = x.shape
+        for i in range(self.out_channels):
+            res.append(self.qlayer_list[i](x).view(bs, h, w))        
+        x = torch.stack(res, dim=1)
+        return x
 
 class DoubleConv(nn.Module):
     def __init__(self, in_ch, out_ch, mid_ch=None):
@@ -190,9 +229,11 @@ class Q_UNET(nn.Module):
         self.down1 = DownBlock(64, 128)
         self.down2 = DownBlock(128, 256)
         self.down3 = DownBlock(256, 512)
-        self.qml_encoder = nn.Conv2d(512, 1, 1, 1)
-        self.qml_lay = Quanv(n_qubits, n_qubits)
-        self.qml_decoder = nn.Conv2d(1, 512, 1, 1)
+        self.qml_encoder = nn.Sequential(nn.Conv2d(512, 1, 1, 1), 
+                                         Q_Conv2d(1, 1, 2, 2, num_layers=2),
+                                         nn.Conv2d(1, 512, 1, 1))
+        # self.qml_lay = Quanv(n_qubits, n_qubits)
+        # self.qml_decoder = nn.Conv2d(1, 512, 1, 1)
         factor = 2 if bilinear else 1
         self.down4 = DownBlock(512, 1024//factor)
 
@@ -210,10 +251,10 @@ class Q_UNET(nn.Module):
         x3 = self.down3(x2)
         x = self.down4(x3)
         x = self.qml_encoder(x)
-        bs, c, h, w = x.shape
-        x = x.reshape(bs, -1, self.n_qubits)
-        x = x.reshape(bs, c, h, w)
-        x = self.qml_decoder(x)
+        # bs, c, h, w = x.shape
+        # x = x.reshape(bs, -1, self.n_qubits)
+        # x = x.reshape(bs, c, h, w)
+        # x = self.qml_decoder(x)
 
         x = self.up1(x, x3)
         x = self.up2(x, x2)
@@ -358,7 +399,7 @@ if __name__ == '__main__':
     img = ToTensor()(img).cuda()
     img = img.unsqueeze(0)
     # img = torch.randn(1, 1, 100, 100).float().cuda()
-    model = UNET(in_ch=1, out_ch=1).cuda() 
+    model = Q_UNET(in_ch=1, out_ch=1).cuda() 
     # model = Small_Q_UNET(in_ch=1, out_ch=1).cuda() 
     # model = Small_UNET(in_ch=1, out_ch=1).cuda() 
     model.train()
