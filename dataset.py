@@ -18,11 +18,9 @@ class Pic_to_Pic_dataset(Dataset):
                                          v2.RandomVerticalFlip(),
                                          v2.ToImage(),
                                          v2.ToDtype(torch.float32, scale=True),])
-            self.df = self.df[:10000]
         else:
             self.transform = v2.Compose([v2.ToImage(),
                                          v2.ToDtype(torch.float32, scale=True),])
-            self.df = self.df[:1000]
 
     def __len__(self): 
         return len(self.df)

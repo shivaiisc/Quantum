@@ -31,8 +31,8 @@ def loop(model, loader, optimizer, criterion, args, mode='train'):
     for idx, (x, y) in pbar: 
         x = x.to(args.device)
         y = y.to(args.device)
-        # if mode == 'train':
-        #     x = x + torch.randn_like(x, device=args.device)*args.noise
+        if mode == 'train':
+            x = x + torch.randn_like(x, device=args.device)*args.noise
         logits = model(x) 
         loss = criterion(logits, y)
         
@@ -200,7 +200,7 @@ if __name__ == '__main__':
     parser.add_argument('-n', '--noise', type=float, default=0.0)
     parser.add_argument('-exp', '--experiment', type=str, default='quantum_noise')
     parser.add_argument('-m', '--model_name', type=str, default='unet')
-    parser.add_argument('-bs', '--batch_size', type=int, default=16)
+    parser.add_argument('-bs', '--batch_size', type=int, default=32)
     parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('-es', '--early_stop', type=int, default=6) 
     parser.add_argument('-rc', '--random_csv', type=str, default='../../qml-data/csv_files/whole_99_org.csv') 

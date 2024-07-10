@@ -1,0 +1,2 @@
+train_ssim_loss,train_dice_loss,train_bce_loss,train_total_loss,val_ssim_loss,val_dice_loss,val_bce_loss,val_total_loss
+0.1892,0.6642,0.1006,0.3148,0.0182,0.6575,0.072,0.2467
