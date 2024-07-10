@@ -6,7 +6,7 @@ import os
 import yaml
 from einops import rearrange
 from torch.nn import functional as F
-from torch import bilinear, nn, quantized_batch_norm, threshold 
+from torch import bilinear, nn, quantized_batch_norm, select, threshold 
 import pennylane as qml 
 
 

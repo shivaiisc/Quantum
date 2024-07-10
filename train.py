@@ -22,12 +22,6 @@ def loop(model, loader, optimizer, criterion, args, mode='train'):
     dice_loss_list = list() 
     bce_loss_list = list() 
     total_loss_list = list()
-    if args.experiment == 'rcnn': 
-        model.missed = 0
-        if args.parallel:
-            model.module.faster_rcnn.eval() 
-        else:
-            model.faster_rcnn.eval()
     for idx, (x, y) in pbar: 
         x = x.to(args.device)
         y = y.to(args.device)
@@ -53,8 +47,6 @@ def loop(model, loader, optimizer, criterion, args, mode='train'):
                     'bce_loss': round(bce_loss.item(), 4),
                     'total_loss': round(loss.item(), 4),
                     'mode': mode,
-                    # 'missed': model.module.missed if args.parallel\
-                    # else model.missed,
                     'es': f'{args.early_stopping_idx}/{args.early_stop}'}
         ssim_loss_list.append(log_dict['ssim_loss'])
         dice_loss_list.append(log_dict['dice_loss'])
