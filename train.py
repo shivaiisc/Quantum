@@ -65,15 +65,23 @@ def loop(model, loader, optimizer, criterion, args, mode='train'):
     return loss_dct
         
 
-def train(model, loaders, optimizer, criterion, args):
+def train(model , loaders, optimizer, criterion, args):
     train_loader = loaders['train']
     test_loader = loaders['test']
     val_loader = loaders['val']
 
+    
     best_loss = float('inf') 
     if args.from_scratch: 
-        model = 
-    for epoch in range(args.epochs): 
+        ckpt = torch.load(args.save_path) 
+        model_state = ckpt['model_state'] 
+        curr_epoch = ckpt[ 'epochs']
+        model.load_state_dict(model_state)
+        epochs_range = range(curr_epoch, args.epochs)
+    else: 
+        epochs_range = range(args.epochs) 
+        
+    for epoch in epochs_range: 
         args.curr_epoch = epoch
         
         model.train() 
@@ -205,8 +213,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    print(args)
-    exit()
+    # print(args)
     args.early_stopping_idx = 0 
 
     main(args)
