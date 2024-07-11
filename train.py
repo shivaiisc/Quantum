@@ -133,7 +133,7 @@ def train(model , loaders, optimizer, criterion, args):
 
 
 def main(args):
-    train_data = Pic_to_Pic_dataset(args.random_csv, mode='train')
+    train_data = Pic_to_Pic_dataset(args.train_csv, mode='train')
     val_data = Pic_to_Pic_dataset(args.val_csv, mode='val')
     test_data = Pic_to_Pic_dataset(args.test_csv, mode='test')
 
@@ -196,8 +196,7 @@ if __name__ == '__main__':
     parser.add_argument('-bs', '--batch_size', type=int, default=32)
     parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('-es', '--early_stop', type=int, default=6) 
-    parser.add_argument('-rc', '--random_csv', type=str, default='../../qml-data/csv_files/whole_99_org.csv') 
-    parser.add_argument('-trc', '--train_csv', type=str, default='../../qml-data/csv_files/whole_99_org.csv') 
+    parser.add_argument('-trc', '--train_csv', type=str, default='../../qml-data/csv_files/train_75_org.csv') 
     parser.add_argument('-vc', '--val_csv', type=str, default='../../qml-data/csv_files/val_10_org.csv') 
     parser.add_argument('-tc', '--test_csv', type=str, default='../../qml-data/csv_files/test_14_org.csv') 
     parser.add_argument('-ic', '--in_ch', type=int, default=1)
