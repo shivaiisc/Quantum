@@ -71,7 +71,9 @@ def train(model, loaders, optimizer, criterion, args):
     val_loader = loaders['val']
 
     best_loss = float('inf') 
-    for args.epoch in range(args.epochs): 
+    if args.from_scratch: 
+        model = 
+    for epoch in range(args.epochs): 
         args.curr_epoch = epoch
         
         model.train() 
@@ -140,27 +142,18 @@ def main(args):
     
     
     ckpt_dir = f'./ckpts/{args.experiment}/'
-    if not os.path.exists(ckpt_dir):
-        os.mkdir(ckpt_dir)
-    ckpt_dir += str(len(os.listdir(ckpt_dir)))
-    if not os.path.exists(ckpt_dir):
-        os.mkdir(ckpt_dir)
-    args.save_path = f'{ckpt_dir}/{args.model_name}.pth'
+    os.makedirs(ckpt_dir, exist_ok=True)
+    args.save_path = f'{ckpt_dir}/{args.model_name}_last.pth'
     args.save_best_path = f'{ckpt_dir}/best_{args.model_name}.pth'
-    logs_path = f'./logs/{args.experiment}/'
-    if not os.path.exists(logs_path): 
-        os.mkdir(logs_path) 
-    logs_path += str(len(os.listdir(logs_path))) 
-    args.logs_path = logs_path
-    if not os.path.exists(logs_path): 
-        os.mkdir(logs_path) 
-    with open(logs_path+'/config.pkl', 'wb') as f:
+    args.logs_path = f'./logs/{args.experiment}/'
+    os.makedirs(args.logs_path)
+    with open(args.logs_path+'/config.pkl', 'wb') as f:
         pickle.dump(vars(args), f)
-    args.csv_path = f'{logs_path}/log.csv'
-    args.plot_path = f'{logs_path}/plots/'
+    args.csv_path = f'{args.logs_path}/log.csv'
+    args.plot_path = f'{args.logs_path}/plots/'
     if not os.path.exists(args.plot_path):
         os.mkdir(args.plot_path)
-    config_txt_path = f'{logs_path}/config.txt'
+    config_txt_path = f'{args.logs_path}/config.txt'
     
     optimizer = Adam(params = filter(lambda p: p.requires_grad, model.parameters()),
                      lr=args.lr)
