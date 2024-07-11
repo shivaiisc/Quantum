@@ -186,7 +186,8 @@ def pth_to_depth_vid(pth, depth, path='./res/vid.mp4', frames=60):
 
 def save_model(model, loss, args, best=False): 
     dct = {'model_state':model.module.state_dict() if args.parallel \
-                            else model.state_dict()}
+                            else model.state_dict(),
+           'epochs': args.epochs}
     print('====saving model====')
     torch.save(dct, args.save_best_path if best\
                else args.save_path)

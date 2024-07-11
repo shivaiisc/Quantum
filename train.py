@@ -71,7 +71,7 @@ def train(model, loaders, optimizer, criterion, args):
     val_loader = loaders['val']
 
     best_loss = float('inf') 
-    for epoch in range(args.epochs): 
+    for args.epoch in range(args.epochs): 
         args.curr_epoch = epoch
         
         model.train() 
@@ -208,8 +208,12 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--parallel', type=int, default=1)
     parser.add_argument('-th', '--threshold', type=float, default=0.7)
     parser.add_argument('-dev', '--device', type=str, default='cuda:0')
+    parser.add_argument('-fs', '--from_scratch', type=int, default=1) 
+
     args = parser.parse_args()
 
+    print(args)
+    exit()
     args.early_stopping_idx = 0 
 
     main(args)
