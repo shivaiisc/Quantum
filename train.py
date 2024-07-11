@@ -1,4 +1,5 @@
-import csv 
+import csv
+from enum import pickle_by_enum_name 
 from curtsies.fmtfuncs import green, red, blue 
 import pickle
 import torch 
@@ -72,7 +73,7 @@ def train(model , loaders, optimizer, criterion, args):
 
     
     best_loss = float('inf') 
-    if args.from_scratch: 
+    if not args.from_scratch: 
         ckpt = torch.load(args.save_path) 
         model_state = ckpt['model_state'] 
         curr_epoch = ckpt[ 'epochs']
@@ -151,17 +152,17 @@ def main(args):
     
     ckpt_dir = f'./ckpts/{args.experiment}/'
     os.makedirs(ckpt_dir, exist_ok=True)
-    args.save_path = f'{ckpt_dir}/{args.model_name}_last.pth'
-    args.save_best_path = f'{ckpt_dir}/best_{args.model_name}.pth'
-    args.logs_path = f'./logs/{args.experiment}/'
-    os.makedirs(args.logs_path)
-    with open(args.logs_path+'/config.pkl', 'wb') as f:
+    args.save_path = os.path.join(ckpt_dir, f'{args.model_name}_last.pth')
+    args.save_best_path = os.path.join(ckpt_dir, f'{args.model_name}_best.pth')
+    args.logs_path = os.path.join('logs', f'{args.experiment}/')
+    os.makedirs(args.logs_path, exist_ok=True)
+    pickle_path = os.path.join(args.logs_path, 'config.pkl')
+    with open(pickle_path, 'wb') as f:
         pickle.dump(vars(args), f)
-    args.csv_path = f'{args.logs_path}/log.csv'
-    args.plot_path = f'{args.logs_path}/plots/'
-    if not os.path.exists(args.plot_path):
-        os.mkdir(args.plot_path)
-    config_txt_path = f'{args.logs_path}/config.txt'
+    args.csv_path = os.path.join(args.logs_path, 'log.csv') 
+    args.plot_path = os.path.join(args.logs_path, 'plots')#f'{args.logs_path}/plots/'
+    os.makedirs(args.plot_path, exist_ok=True)
+    config_txt_path = os.path.join(args.logs_path, 'config.txt') 
     
     optimizer = Adam(params = filter(lambda p: p.requires_grad, model.parameters()),
                      lr=args.lr)
