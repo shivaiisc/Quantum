@@ -160,7 +160,7 @@ def main(args):
     with open(pickle_path, 'wb') as f:
         pickle.dump(vars(args), f)
     args.csv_path = os.path.join(args.logs_path, 'log.csv') 
-    args.plot_path = os.path.join(args.logs_path, 'plots')#f'{args.logs_path}/plots/'
+    args.plot_path = os.path.join(args.logs_path, 'plots/')#f'{args.logs_path}/plots/'
     os.makedirs(args.plot_path, exist_ok=True)
     config_txt_path = os.path.join(args.logs_path, 'config.txt') 
     
