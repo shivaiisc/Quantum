@@ -11,14 +11,16 @@ from torchvision.transforms.functional import crop
 class Pic_to_Pic_dataset(Dataset): 
     def __init__(self, data_csv, mode='train'): 
         super().__init__() 
-        self.df = pd.read_csv(data_csv).sort_values('patient_id')[:30000]
-        self.df =  self.df.reset_index()
         if mode == 'train':  
+            self.df = pd.read_csv(data_csv).sort_values('patient_id')[:30000]
+            self.df =  self.df.reset_index()
             self.transform = v2.Compose([v2.RandomHorizontalFlip(),
                                          v2.RandomVerticalFlip(),
                                          v2.ToImage(),
                                          v2.ToDtype(torch.float32, scale=True),])
         else:
+            self.df = pd.read_csv(data_csv).sort_values('patient_id')[:10000]
+            self.df =  self.df.reset_index()
             self.transform = v2.Compose([v2.ToImage(),
                                          v2.ToDtype(torch.float32, scale=True),])
 

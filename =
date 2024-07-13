@@ -164,9 +164,6 @@ def main(args):
         model = torch.nn.DataParallel(model, device_ids=[0, 1])
     
     
-    if not args.experiment:
-        print('Enter experiment name')
-        exit()
     ckpt_dir = f'./ckpts/{args.experiment}/'
     os.makedirs(ckpt_dir, exist_ok=True)
     args.save_path = os.path.join(ckpt_dir, f'{args.model_name}_last.pth')
@@ -214,7 +211,7 @@ if __name__ == '__main__':
     parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('-es', '--early_stop', type=int, default=6) 
     parser.add_argument('-rs', '--random_split', type=int, default=0)
-    parser.add_argument('-rc', '--random_csv', type=str, default='../../qml-data/csv_files/org_whole_99.csv') 
+    parser.add_argument('-rc', '--random_csv', type=str, default='../../qml-data/csv_files/whole_99_org.csv') 
     parser.add_argument('-trc', '--train_csv', type=str, default='../../qml-data/csv_files/train_75_org.csv') 
     parser.add_argument('-vc', '--val_csv', type=str, default='../../qml-data/csv_files/val_10_org.csv') 
     parser.add_argument('-tc', '--test_csv', type=str, default='../../qml-data/csv_files/test_14_org.csv') 
@@ -236,7 +233,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    print(args)
+    # print(args)
     args.early_stopping_idx = 0 
 
     main(args)
