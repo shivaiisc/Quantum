@@ -8,6 +8,11 @@ from tqdm import tqdm
 
 def forward_hook(inst, ip, op): 
     # op = (op-torch.min(op))/(torch.max(op)-torch.min(op)) 
+    idx = os.listdir(args.vis_dir)
+    print(op.shape)
+    exit()
+    ToPILImage()(op).save('op_{}.png'.format(idx))
+    return 
     cos_sim = rearrange(op, '1 c h w -> (h w) c')
     norm = torch.linalg.norm(cos_sim, dim=1).view(-1, 1)
     norm = norm @ norm.t()

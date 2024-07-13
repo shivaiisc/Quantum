@@ -134,9 +134,13 @@ def train(model , loaders, optimizer, criterion, args):
 
 
 def main(args):
-    train_data = Pic_to_Pic_dataset(args.train_csv, mode='train')
-    val_data = Pic_to_Pic_dataset(args.val_csv, mode='val')
-    test_data = Pic_to_Pic_dataset(args.test_csv, mode='test')
+    if args.random_split:
+        whole_data = Pic_to_Pic_dataset(args.random_csv, mode='train')
+        train_data, val_data, test_data = random_split(whole_data, [0.8, 0.1, 0.1])
+    else:
+        train_data = Pic_to_Pic_dataset(args.train_csv, mode='train')
+        val_data = Pic_to_Pic_dataset(args.val_csv, mode='val')
+        test_data = Pic_to_Pic_dataset(args.test_csv, mode='test')
 
     loaders = {'train': DataLoader(train_data, args.batch_size, shuffle=True),
                'val': DataLoader(val_data, args.batch_size),
@@ -190,13 +194,14 @@ if __name__ == '__main__':
     import argparse 
     parser = argparse.ArgumentParser() 
     parser.add_argument('-ep', '--epochs', type=int, default=50)
-    parser.add_argument('-rs', '--random_split', type=int, default=1)
+    parser.add_argument('-rs', '--random_split', type=int, default=0)
     parser.add_argument('-n', '--noise', type=float, default=0.0)
     parser.add_argument('-exp', '--experiment', type=str, default='quantum_noise')
     parser.add_argument('-m', '--model_name', type=str, default='unet')
     parser.add_argument('-bs', '--batch_size', type=int, default=32)
     parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('-es', '--early_stop', type=int, default=6) 
+    parser.add_argument('-rc', '--random_csv', type=str, default='../../qml-data/csv_files/whole_99_org.csv') 
     parser.add_argument('-trc', '--train_csv', type=str, default='../../qml-data/csv_files/train_75_org.csv') 
     parser.add_argument('-vc', '--val_csv', type=str, default='../../qml-data/csv_files/val_10_org.csv') 
     parser.add_argument('-tc', '--test_csv', type=str, default='../../qml-data/csv_files/test_14_org.csv') 

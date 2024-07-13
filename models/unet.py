@@ -188,6 +188,15 @@ class UNET(nn.Module):
         self.up3.name = 'up3'
         self.up4.name = 'up4'
         self.out.name = 'out'        
+        self.ch.model_name = 'unet'
+        self.down1.model_name = 'unet'
+        self.down2.model_name = 'unet'
+        self.down3.model_name = 'unet'
+        self.down4.model_name = 'unet'
+        self.up1.model_name = 'unet'
+        self.up2.model_name = 'unet'
+        self.up3.model_name = 'unet'
+        self.up4.model_name = 'unet'
 
 class H_UNET(nn.Module):
     def __init__(self, in_ch=1, out_ch=1, bilinear=True):
@@ -222,7 +231,7 @@ class H_UNET(nn.Module):
 
 
 class Q_UNET(nn.Module):
-    def __init__(self, in_ch=1, out_ch=1, n_qubits=16, bilinear=True):
+    def __init__(self, in_ch=1, out_ch=1, n_qubits=28, bilinear=True):
         super().__init__() 
         self.n_qubits = n_qubits
         self.ch = DoubleConv(in_ch, 64)
@@ -232,6 +241,8 @@ class Q_UNET(nn.Module):
         self.qml_encoder = nn.Sequential(nn.Conv2d(512, 1, 1, 1), 
                                          Q_Conv2d(1, 1, 2, 2, num_layers=2),
                                          nn.Conv2d(1, 512, 1, 1))
+                                       
+        # self.qml_encoder = nn.Conv2d(512, 1, 1, 1)
         # self.qml_lay = Quanv(n_qubits, n_qubits)
         # self.qml_decoder = nn.Conv2d(1, 512, 1, 1)
         factor = 2 if bilinear else 1
@@ -262,6 +273,33 @@ class Q_UNET(nn.Module):
         x = self.up4(x, x0)
 
         return self.out(x)
+
+    def assign_names(self): 
+        print('Assigning names to layers')
+        self.ch.name = 'ch' 
+        self.down1.name = 'down1'
+        self.down2.name = 'down2'
+        self.down3.name = 'down3'
+        self.down4.name = 'down4'
+        self.qml_encoder.name = 'qml_encoder'
+        # self.qml_decoder.name = 'qml_decoder'
+        self.up1.name = 'up1'
+        self.up2.name = 'up2'
+        self.up3.name = 'up3'
+        self.up4.name = 'up4'
+        self.out.name = 'out'        
+        self.ch.model_name = 'q_unet'
+        self.down1.model_name = 'q_unet'
+        self.down2.model_name = 'q_unet'
+        self.down3.model_name = 'q_unet'
+        self.down4.model_name = 'q_unet'
+        self.up1.model_name = 'q_unet'
+        self.up2.model_name = 'q_unet'
+        self.up3.model_name = 'q_unet'
+        self.up4.model_name = 'q_unet'
+        self.qml_encoder.model_name = 'q_unet' 
+        # self.qml_decoder.model_name = 'q_unet'
+
 
 class Small_UNET(nn.Module):
     def __init__(self, in_ch=1, out_ch=1, bilinear=True):
