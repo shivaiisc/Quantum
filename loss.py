@@ -76,7 +76,7 @@ class SSIM_DICE_BCE(nn.Module):
         super().__init__() 
         self.ssim = SSIM() 
         self.dice= DiceLoss() 
-        self.bce = nn.BCELoss()
+        self.bce = nn.BCEWithLogitsLoss()
 
     def forward(self, logits, targets):
         ssim_loss = self.ssim(logits, targets.to(torch.float32)) 
