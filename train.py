@@ -17,51 +17,52 @@ import os
 
 
 def loop(model, loader, optimizer, criterion, args, mode='train'): 
-    pbar = tqdm(enumerate(loader), total=len(loader)) 
-    pbar.set_description(f'epochs:{args.curr_epoch}/{args.epochs}')
-    ssim_loss_list = list() 
-    dice_loss_list = list() 
-    bce_loss_list = list() 
-    total_loss_list = list()
-    for idx, (x, y) in pbar: 
-        x = x.to(args.device)
-        y = y.to(args.device)
-        if mode == 'train':
-            x = x + torch.randn_like(x, device=args.device)*args.noise
-        logits = model(x) 
-        loss = criterion(logits, y)
-        
-        ssim_loss = loss['ssim_loss'] 
-        dice_loss = loss['dice_loss'] 
-        bce_loss = loss['bce_loss'] 
-        loss = args.ssim_ratio * ssim_loss + \
-            args.dice_ratio * dice_loss + \
-            args.bce_ratio * bce_loss 
+    with tqdm(enumerate(loader), total=len(loader)) as pbar: 
+        pbar.set_description(f'epochs:{args.curr_epoch}/{args.epochs}')
+        ssim_loss_list = list() 
+        dice_loss_list = list() 
+        bce_loss_list = list() 
+        total_loss_list = list()
+        for idx, (x, y) in pbar: 
+            x = x.to(args.device)
+            y = y.to(args.device)
+            if mode == 'train':
+                x = x + torch.randn_like(x, device=args.device)*args.noise
+            logits = model(x) 
+            loss = criterion(logits, y)
+            
+            ssim_loss = loss['ssim_loss'] 
+            dice_loss = loss['dice_loss'] 
+            bce_loss = loss['bce_loss'] 
+            loss = args.ssim_ratio * ssim_loss + \
+                args.dice_ratio * dice_loss + \
+                args.bce_ratio * bce_loss 
 
-        if mode == 'train': 
-            optimizer.zero_grad() 
-            loss.backward() 
-            optimizer.step() 
-        # metrics = calc_metrics(logits, y)
-        log_dict = {'dice_loss': round(dice_loss.item(), 4),
-                    'ssim_loss': round(ssim_loss.item(), 4),
-                    'bce_loss': round(bce_loss.item(), 4),
-                    'total_loss': round(loss.item(), 4),
-                    'mode': mode,
-                    'es': f'{args.early_stopping_idx}/{args.early_stop}'}
-        ssim_loss_list.append(log_dict['ssim_loss'])
-        dice_loss_list.append(log_dict['dice_loss'])
-        bce_loss_list.append(log_dict['bce_loss'])
-        total_loss_list.append(log_dict['total_loss'])
-        # pbar.set_postfix({**metrics, **log_dict})
-        
-        log_dict.pop('ssim_loss') 
-        log_dict.pop('bce_loss')
-        pbar.set_postfix(log_dict, refresh=idx%10==0)
-    loss_dct = {f'{mode}_ssim_loss': round(np.mean(ssim_loss_list), 4),
-                f'{mode}_dice_loss': round(np.mean(dice_loss_list), 4),
-                f'{mode}_bce_loss': round(np.mean(bce_loss_list), 4),
-                f'{mode}_total_loss': round(np.mean(total_loss_list), 4)}
+            if mode == 'train': 
+                optimizer.zero_grad() 
+                loss.backward() 
+                optimizer.step() 
+            # metrics = calc_metrics(logits, y)
+            log_dict = {'dice_loss': round(dice_loss.item(), 4),
+                        'ssim_loss': round(ssim_loss.item(), 4),
+                        'bce_loss': round(bce_loss.item(), 4),
+                        'total_loss': round(loss.item(), 4),
+                        'mode': mode,
+                        'es': f'{args.early_stopping_idx}/{args.early_stop}'}
+            ssim_loss_list.append(log_dict['ssim_loss'])
+            dice_loss_list.append(log_dict['dice_loss'])
+            bce_loss_list.append(log_dict['bce_loss'])
+            total_loss_list.append(log_dict['total_loss'])
+            # pbar.set_postfix({**metrics, **log_dict})
+            
+            log_dict.pop('ssim_loss') 
+            log_dict.pop('bce_loss')
+            pbar.set_postfix(log_dict, refresh=idx%10==0)
+        loss_dct = {f'{mode}_ssim_loss': round(np.mean(ssim_loss_list), 4),
+                    f'{mode}_dice_loss': round(np.mean(dice_loss_list), 4),
+                    f'{mode}_bce_loss': round(np.mean(bce_loss_list), 4),
+                    f'{mode}_total_loss': round(np.mean(total_loss_list), 4)}
+        pbar.set_postfix(loss_dct)
     
     return loss_dct
         
