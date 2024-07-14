@@ -1,16 +1,18 @@
-from logging import shutdown
+import numpy as np 
+from einops import rearrange
 import torch
 from torch.utils.data import Dataset 
 from PIL import Image 
 from torchvision.transforms import ToPILImage, ToTensor, transforms
 from torchvision.transforms import v2 
-import os 
 import pandas as pd
-from torchvision.transforms.functional import crop 
+import albumentations as A
+import cv2 
 
 class Pic_to_Pic_dataset(Dataset): 
     def __init__(self, data_csv, mode='train'): 
         super().__init__() 
+        self.mode=mode
         if mode == 'train':  
             self.df = pd.read_csv(data_csv).sort_values('patient_id')[:30000]
             self.df =  self.df.reset_index()
@@ -18,6 +20,19 @@ class Pic_to_Pic_dataset(Dataset):
                                          v2.RandomVerticalFlip(),
                                          v2.ToImage(),
                                          v2.ToDtype(torch.float32, scale=True),])
+            
+            self.transform = A.Compose(
+                [
+                    A.Rotate(limit=40, p=0.9, border_mode=cv2.BORDER_CONSTANT),
+                    A.HorizontalFlip(p=0.5),
+                    A.VerticalFlip(p=0.1),
+                    A.RGBShift(r_shift_limit=25, g_shift_limit=25, b_shift_limit=25, p=0.9),
+                    A.OneOf([
+                        A.Blur(blur_limit=3, p=0.5),
+                        A.ColorJitter(p=0.5),
+                    ], p=1.0),
+                ]
+            )
         else:
             self.df = pd.read_csv(data_csv).sort_values('patient_id')[:10000]
             self.df =  self.df.reset_index()
@@ -30,10 +45,21 @@ class Pic_to_Pic_dataset(Dataset):
     def __getitem__(self, index): 
         img_path = '/home/shivac/qml-data/'+self.df.img_path[index]
         mask_path = '/home/shivac/qml-data/'+self.df.mask_path[index] 
-        img = Image.open(img_path).convert('L') 
+        img = Image.open(img_path) 
         # img = Image.open(img_path) 
         mask = Image.open(mask_path)
-        img, mask = self.transform(img, mask)
+        if self.mode == 'train': 
+            img = np.array(img) 
+            mask = np.array(mask)
+            data = self.transform(image=img, mask=mask)
+            img = data['image'] 
+            mask = data['mask'] 
+            img = torch.from_numpy(img)/255.0 
+            mask = torch.from_numpy(mask)/255.0
+            img = rearrange(img, 'h w c -> c h w ')
+            mask = mask.unsqueeze(0)
+        else: 
+            img, mask = self.transform(img, mask)
         return img, mask
 
 
@@ -92,15 +118,11 @@ class Cond_Pic_to_Pic_dataset(Dataset):
 if __name__ == '__main__': 
     # dataset = Seq_Median_Nerve_Dataset(path='../.data/') 
     import torchvision.transforms as T 
-    transform = T.Compose([T.ToTensor(), T.RandomHorizontalFlip(),
-                           T.RandomVerticalFlip()])
-    transform = T.ToTensor()
-    dataset = Crop_dataset('/home/shivac/qml-data/csv_files/crop_train_80.csv',
-                                 transform=transform) 
+    dataset = Pic_to_Pic_dataset('/home/shivac/qml-data/csv_files/org_val_9.csv', mode='train')
     from torch.utils.data import DataLoader 
     loader = DataLoader(dataset, batch_size=2, shuffle=True) 
     img, mask= next(iter(loader)) 
-    print(img.shape, mask.shape)
+    print(f'{img.shape, mask.shape = }')
     ToPILImage()(img[0]).save('./samples/im.png')
     ToPILImage()(mask[0]).save('./samples/crop_mask.png')
     
