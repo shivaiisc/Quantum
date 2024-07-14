@@ -1,17 +1,6 @@
-
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
-
-# In[2]:
-
 
 class DoubleConv(nn.Module):
     def __init__(self, in_channels, out_channels, mid_channels=None):
@@ -103,3 +92,15 @@ class UNet(nn.Module):
         logits = self.outc(x)
         logits=self.decision(logits)
         return logits
+
+
+
+
+
+
+if __name__ == '__main__': 
+    model = UNet(1, 1).cuda() 
+    img = torch.zeros(2, 1, 456, 342, device='cuda')
+    logits = model(img) 
+    print(f'{logits.shape = }')
+    

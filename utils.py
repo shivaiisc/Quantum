@@ -19,6 +19,9 @@ def get_model(args):
     elif args.model_name == 'unet':
         from models import UNET
         model = UNET(in_ch=args.in_ch, out_ch=args.out_ch).to(args.device)
+    elif args.model_name == 'k_unet': 
+        from models import UNet 
+        model = UNet(args.in_ch, args.out_ch).to(args.device)
     elif args.model_name == 'u2net': 
         from models import U2NET
         model = U2NET(in_ch=args.in_ch, out_ch=args.out_ch).to(args.device) 
