@@ -45,7 +45,7 @@ class Pic_to_Pic_dataset(Dataset):
     def __getitem__(self, index): 
         img_path = '/home/shivac/qml-data/'+self.df.img_path[index]
         mask_path = '/home/shivac/qml-data/'+self.df.mask_path[index] 
-        img = Image.open(img_path) 
+        img = Image.open(img_path).convert('L')
         # img = Image.open(img_path) 
         mask = Image.open(mask_path)
         if self.mode == 'train': 
